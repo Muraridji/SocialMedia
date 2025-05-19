@@ -50,13 +50,13 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("home")
+    return redirect("accounts:home")
 
 
 @login_required
 def user_profile_view(request, username):
     user_profile = get_object_or_404(CustomUser, username=username)
-    return render(request, 'profile/profile.html', {
+    return render(request, 'accounts/profile.html', {
         'user_profile': user_profile,
         'is_own_profile': user_profile == request.user,
     })
@@ -71,7 +71,7 @@ def edit_profile_view(request):
             return redirect('accounts:user-profile', username=request.user.username)
     else:
         form = ProfileUpdateForm(instance=request.user)
-    return render(request, 'profile/edit_profile.html', {'form': form})
+    return render(request, 'accounts/edit_profile.html', {'form': form})
 
 
 

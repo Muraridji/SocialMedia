@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+    <header>
+        <h1>Профіль користувача: {{ user_profile.username }}</h1>
+        {% if is_own_profile %}
+            <a href="{% url 'accounts:edit-profile' %}">Редагувати профіль</a>
+        {% endif %}
+    </header>
+
+    <main>
+        <section>
+            <h2>Дані профілю</h2>
+            <p><strong>Ім'я користувача:</strong> {{ user_profile.username }}</p>
+            <p><strong>Email:</strong> {{ user_profile.email }}</p>
+            <p><strong>Bio:</strong> {{ user_profile.bio }}</p>
+            {% if user_profile.avatar %}
+                <p><strong>Аватар:</strong><br><img src="{{ user_profile.avatar.url }}" alt="Avatar" width="150"></p>
+            {% else %}
+                <p>Аватар не завантажено</p>
+            {% endif %}
+        </section>
+    </main>
+
+{% endblock %}
