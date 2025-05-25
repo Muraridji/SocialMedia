@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<a href="{% url 'posts:post_list' %}">Назад</a>
+
+<h1>{{ post.title }}</h1>
+<p>{{ post.body }}</p>
+
+{% if post.file %}
+    <p><img src="{{ post.file.url }}" alt="Медіа" style="max-width: 400px;"></p>
+{% endif %}
+
+<p>
+    Автор: <a href="{% url 'posts:user_posts' post.creator.username %}">
+        {{ post.creator.username }}
+    </a>
+</p>
+
+<form action="{% url 'posts:post_like' post.pk %}" method="post" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit">
+        👍 {{ post.likes.count }}
+    </button>
+</form>
+
+<hr>
+<h2>Коментарі</h2>
+<ul>
+    {% for comment in post.comments.all %}
+        <li>
+            <strong>{{ comment.author }}:</strong> {{ comment.content }}
+            {% if comment.media %}
+                <br><img src="{{ comment.media.url }}" width="200">
+            {% endif %}
+
+            <form action="{% url 'posts:comment_like' comment.pk %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">
+                    ❤️ {{ comment.likes.count }}
+                </button>
+            </form>
+
+            {% if comment.author == request.user %}
+                <a href="{% url 'posts:comment_delete' comment.pk %}">🗑️</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Поки що коментарів немає.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

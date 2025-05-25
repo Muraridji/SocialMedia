@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<h1>Пости користувача {{ viewed_user.username }}</h1>
+
+<ul>
+    {% for post in posts %}
+        <li>
+            <a href="{% url 'posts:post_detail' post.pk %}">{{ post.title }}</a> — {{ post.created_at|date:"d.m.Y H:i" }}
+        </li>
+    {% empty %}
+        <li>У цього користувача ще немає постів.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

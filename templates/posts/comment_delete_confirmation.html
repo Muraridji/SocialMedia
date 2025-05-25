@@ -1,0 +1,9 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<h2>Видалити коментар?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Так, видалити</button>
+    <a href="{% url 'posts:post_detail' object.post.pk %}">Скасувати</a>
+</form>
+{% endblock %}
