@@ -47,6 +47,15 @@
     {% empty %}
         <li>Поки що коментарів немає.</li>
     {% endfor %}
+
+    {% if user.is_authenticated %}
+    <h3>Додати коментар</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Надіслати</button>
+    </form>
+    {% endif %}
 </ul>
 
 {% endblock %}

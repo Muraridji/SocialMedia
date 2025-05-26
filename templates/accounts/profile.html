@@ -23,9 +23,19 @@
         </section>
     </main>
 
+    {% if is_own_profile %}
+        <p>
+            {% for request in received_requests%}
+                <a href="{% url 'accounts:friend_request' %}">
+                    Запит дружби вiд {{ request.sender.username }}
+                </a>
+            {% endfor %}
+        </p>
+    {% endif %}
+
     <p>
-        <a href="{% url 'posts:user_posts' post.creator.username %}">
-            Пости {{ post.creator.username }}
+        <a href="{% url 'posts:user_posts' user_profile.username %}">
+            Пости {{ user_profile.username }}
         </a>
     </p>
 

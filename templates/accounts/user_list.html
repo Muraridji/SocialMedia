@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+{% load friend_tags %}
+
+{% block content %}
+<h2>Користувачі</h2>
+<ul>
+    {% for user in users %}
+        <li>
+            <a href="{% url 'accounts:user-profile' user.username %}">{{ user.username }}</a>
+
+            {% if request.user != user %}
+                {% if user|are_friends:request.user %}
+                    — Ви друзі
+                    <a href="{% url 'accounts:remove_friend' user.username %}">❌ Видалити з друзів</a>
+                {% elif user|received_request:request.user %}
+                    — Запит надіслано
+                {% else %}
+                    <a href="{% url 'accounts:send_request' user.username %}">🤝 Додати в друзі</a>
+                {% endif %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

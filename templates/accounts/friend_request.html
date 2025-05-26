@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load friend_tags %}
+
+{% block content %}
+<h2>Запити в друзі</h2>
+<ul>
+    {% for req in incoming_requests %}
+        <li>
+            {{ req.sender.username }}
+            <a href="{% url 'accounts:accept_request' req.id %}">✅ Прийняти</a>
+            <a href="{% url 'accounts:decline_request' req.id %}">❌ Відхилити</a>
+        </li>
+    {% empty %}
+        <li>Немає нових запитів.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

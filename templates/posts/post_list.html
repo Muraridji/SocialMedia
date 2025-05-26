@@ -6,6 +6,10 @@
     {% for post in posts %}
         <li>
             <a href="{% url 'posts:post_detail' post.pk %}">{{ post.title }}</a> — {{ post.creator }}
+            {% if post.creator == request.user %}
+                <a href="{% url 'posts:post_update' post.pk %}">✏️</a>
+                <a href="{% url 'posts:post_delete' post.pk %}">🗑️</a>
+            {% endif %}
         </li>
     {% empty %}
         <li>Постів немає.</li>

@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% load friend_tags %}
+
+{% block content %}
+<h2>Друзі {{ profile_user.username }}</h2>
+<ul>
+    {% for friend in friends %}
+        <li>
+            <a href="{% url 'accounts:user-profile' friend.username %}">{{ friend.username }}</a>
+            {% if profile_user == request.user %}
+                <a href="{% url 'accounts:remove_friend' friend.username %}">❌</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Немає друзів</li>
+    {% endfor %}
+</ul>
+{% endblock %}
