@@ -11,7 +11,7 @@ from .models import CustomUser, FriendshipRequest, Friendship
 
 
 def home_view(request):
-    return render(request, 'accounts/home.html')
+    return render(request, "home.html")
 
 
 def register(request):
@@ -49,7 +49,7 @@ def login_view(request):
 
             if user:
                 login(request, user)
-                return redirect("accounts:home")
+                return redirect("home")
             else:
                 messages.error(request, "Неправильное имя пользователя или пароль.")
 
@@ -124,7 +124,7 @@ class RemoveFriendView(LoginRequiredMixin, View):
         Friendship.objects.filter(user1=request.user, user2=friend).delete()
         Friendship.objects.filter(user1=friend, user2=request.user).delete()
         messages.success(request, f"{friend.username} видалено з друзів.")
-        return redirect('accounts:user_profile', username=username)
+        return redirect('accounts:user-profile', username=username)
 
 
 class FriendRequestsView(LoginRequiredMixin, ListView):

@@ -7,6 +7,7 @@
     {% for user in users %}
         <li>
             <a href="{% url 'accounts:user-profile' user.username %}">{{ user.username }}</a>
+            <a href="{% url 'chat:create_private_chat' user.id %}">💬 Написати</a>
 
             {% if request.user != user %}
                 {% if user|are_friends:request.user %}

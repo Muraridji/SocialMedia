@@ -23,7 +23,13 @@
         </section>
     </main>
 
+
+
     {% if is_own_profile %}
+
+        <p><a href="{% url 'accounts:friends_list' request.user.username %}">👥 Мої друзі</a></p>
+        <p><a href="{% url 'chat:chat_list' %}">💬 Мої чати</a></p>
+
         <p>
             {% for request in received_requests%}
                 <a href="{% url 'accounts:friend_request' %}">

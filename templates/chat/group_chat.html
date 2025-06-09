@@ -1,0 +1,97 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>Груповий чат: {{ chat.name }}</h2>
+    
+    <div class="chat-box" id="chat-box">
+        {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}my-message{% else %}other-message{% endif %}">
+                <div class="message-header">
+                    <img src="{{ message.sender.avatar.url }}" class="avatar" alt="avatar">
+                    <strong>{{ message.sender.username }}</strong>
+                    <span class="timestamp">{{ message.timestamp|date:"H:i d.m.Y" }}</span>
+                </div>
+                <p>{{ message.content }}</p>
+            </div>
+        {% empty %}
+            <p>Поки що немає повідомлень.</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST" action="{% url 'chat:group_chat_detail' chat.id %}" class="message-form">
+        {% csrf_token %}
+        <textarea name="content" placeholder="Написати повідомлення..." required></textarea>
+        <button type="submit">Надіслати</button>
+    </form>
+</div>
+
+<style>
+.chat-container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+.chat-box {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.my-message {
+    background: #dcf8c6;
+    text-align: right;
+}
+
+.other-message {
+    background: #fff;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.message-header .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.timestamp {
+    margin-left: auto;
+    font-size: 0.8em;
+    color: #888;
+}
+
+.message-form {
+    display: flex;
+    gap: 10px;
+}
+
+.message-form textarea {
+    flex: 1;
+    resize: none;
+    height: 60px;
+    padding: 10px;
+}
+
+.message-form button {
+    padding: 10px 20px;
+}
+</style>
+{% endblock %}

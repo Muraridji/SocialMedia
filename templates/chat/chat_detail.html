@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<h1>
+    {% if chats.group_chat %}
+        {{ chats.name }}
+    {% else %}
+        Приватний чат з 
+        {% for user in chats.participants.all %}
+            {% if user != request.user %}
+                {{ user.username }}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</h1>
+
+<div>
+    <h2>Повідомлення</h2>
+    <ul>
+        {% for message in messages %}
+            <li>
+                <strong>{{ message.author.username }}:</strong> 
+                {{ message.content }}
+                {% if message.media %}
+                    <div><a href="{{ message.media.url }}">[Прикріплений файл]</a></div>
+                {% endif %}
+                <small>({{ message.created_at|date:"d.m.Y H:i" }})</small>
+            </li>
+        {% empty %}
+            <li>Ще немає повідомлень</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
+    <h3>Надіслати повідомлення</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ message_form.as_p }}
+        <button type="submit">Надіслати</button>
+    </form>
+</div>
+
+<a href="{% url 'chat:chat_list' %}">← Назад до списку чатів</a>
+
+{% endblock %}

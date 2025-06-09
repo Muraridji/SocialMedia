@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<p><a href="{% url 'home' %}">← Назад на головну</a></p>
+
+<h1>Мої чати</h1>
+
+<p>
+    <a href="{% url 'chat:group_chat_create' %}" class="btn btn-success">➕ Створити груповий чат</a>
+</p>
+
+<ul>
+    {% for chat in chats %}
+        <li>
+            <a href="{% url 'chat:chat_detail' pk=chat.id %}">
+                {% if chat.group_chat %}
+                    {{ chat.name|default:"(Без назви)" }}
+                {% else %}
+                    Приватний чат з
+                    {% for participant in chat.participants.all %}
+                        {% if participant != request.user %}
+                            {{ participant.username }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </a>
+
+            {% if chat.group_chat %}
+                {% if request.user in chat.participants.all %}
+                    <!-- Кнопка "Вийти" -->
+                    <form action="{% url 'chat:leave_group_chat' chat.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Вийти</button>
+                    </form>
+                {% else %}
+                    <!-- Кнопка "Приєднатися" -->
+                    <form action="{% url 'chat:join_group' chat.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">Приєднатися</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>У вас поки немає чатів</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

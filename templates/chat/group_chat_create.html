@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+{% block content %}
+
+<h2>Створити груповий чат</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Створити</button>
+</form>
+
+<a href="{% url 'chat:chat_list' %}" class="btn btn-secondary mt-3">Назад до списку чатів</a>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1>Головна сторінка</h1>
+    <p>Вітаємо, {{ request.user.username }}!</p>
+    <p><a href="{% url 'accounts:user_list' %}">🔎 Знайти нових друзів</a></p>
+    <p><a href="{% url 'chat:chat_list' %}">💬 Перейти до чатів</a></p>
+    <p><a href="{% url 'accounts:friend_request' %}">📨 Перевірити запити в друзі</a></p>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        {% if chats.avatar %}
+            <img src="{{ chats.avatar.url }}" class="chat-avatar" alt="Аватар чату">
+        {% endif %}
+        <h2>{{ chats.name }}</h2>
+        <div class="chat-participants">
+            <strong>Учасники ({{ chats.participants.count }}):</strong>
+            <ul>
+                {% for participant in chats.participants.all %}
+                    <li>{{ participant.username }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-box" id="chat-box">
+        {% for message in messages %}
+            <div class="message {% if message.author == request.user %}my-message{% else %}other-message{% endif %}">
+                <div class="message-header">
+                    {% if message.author.avatar %}
+                        <img src="{{ message.author.avatar.url }}" class="avatar" alt="Аватар">
+                    {% endif %}
+                    <strong>{{ message.author.username }}</strong>
+                    <span class="timestamp">{{ message.created_at|date:"H:i d.m.Y" }}</span>
+                </div>
+                <p class="message-content">{{ message.content }}</p>
+                {% if message.media %}
+                    <div class="message-media">
+                        <a href="{{ message.media.url }}" target="_blank">📎 Файл</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Ще немає повідомлень у цьому чаті.</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="message-form">
+        {% csrf_token %}
+        {{ message_form.content }}
+        {{ message_form.media }}
+        <button type="submit">Надіслати</button>
+    </form>
+</div>
+
+<style>
+.chat-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.chat-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.chat-participants {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.chat-box {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.my-message {
+    background-color: #d4f8d4;
+    text-align: right;
+}
+
+.other-message {
+    background-color: #ffffff;
+    text-align: left;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.message-header .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.timestamp {
+    margin-left: auto;
+    font-size: 0.8em;
+    color: #888;
+}
+
+.message-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.message-form textarea {
+    flex: 1;
+    height: 60px;
+    resize: none;
+    padding: 10px;
+}
+
+.message-form input[type="file"] {
+    max-width: 150px;
+}
+
+.message-form button {
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+}
+</style>
+
+{% endblock %}
