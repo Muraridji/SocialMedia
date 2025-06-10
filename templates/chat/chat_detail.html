@@ -43,4 +43,51 @@
 
 <a href="{% url 'chat:chat_list' %}">← Назад до списку чатів</a>
 
+
+<script>
+    const chatId = "{{ chats.id }}";
+    console.log(chatId);
+    const userName = "{{ request.user.username }}";
+
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/${chatId}/`);
+
+    // ✅ Добавляем сюда
+    chatSocket.onopen = function() {
+        console.log("WebSocket connection established.");
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+        const username = data.username;
+        const createdAt = data.created_at;
+
+        const messagesList = document.querySelector('ul');
+        const newMessage = document.createElement('li');
+        newMessage.innerHTML = `<strong>${username}:</strong> ${message} <small>(${createdAt})</small>`;
+        messagesList.appendChild(newMessage);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('WebSocket closed unexpectedly');
+    };
+
+    document.querySelector('form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('textarea, input[name="content"]');
+        const message = messageInput.value;
+
+        if (message.trim() !== "") {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInput.value = '';
+        } else {
+            alert("Введіть повідомлення.");
+        }
+    };
+</script>
+
+
 {% endblock %}

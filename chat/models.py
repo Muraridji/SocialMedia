@@ -7,8 +7,14 @@ class Chat(models.Model):
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="chats")
     avatar = models.FileField(upload_to="chats/", blank=True, null=True)
     group_chat = models.BooleanField(default=False)
+    community = models.BooleanField(default=False)
     admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='admin_chats', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.community:
+            self.group_chat = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name if self.group_chat else f"Private chat {self.id}"
@@ -24,6 +30,8 @@ class Message(models.Model):
     media = models.FileField(upload_to="chat_media/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+
+    from_community = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.author} → {self.chat}: {self.content[:30]}"
