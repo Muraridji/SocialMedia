@@ -1,49 +1,186 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-<p><a href="{% url 'home' %}">← Назад на головну</a></p>
+<style>
+  body {
+    background-color: #121224;
+    color: #a0eaff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  a {
+    color: #00ccff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 30px 0 20px 0;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #00ccff;
+    text-shadow: 0 0 8px #00e5ffbb;
+  }
+
+  p a.btn {
+    display: inline-block;
+    margin: 0 auto 20px auto;
+    padding: 10px 16px;
+    background-color: #00ccff;
+    color: #121224;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ccff88;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  p a.btn:hover {
+    background-color: #00e5ff;
+    box-shadow: 0 0 20px #00ccffaa;
+  }
+
+  ul.chat-list {
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul.chat-list li {
+    background-color: #10172d;
+    border-radius: 14px;
+    padding: 16px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 8px #00ccff55, 0 0 18px #00ccffaa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+
+  ul.chat-list li:hover {
+    background-color: #15304a;
+  }
+
+  a.chat-link {
+    color: #a0eaff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    user-select: none;
+  }
+
+  a.chat-link:hover {
+    color: #00ccff;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00ccff;
+    box-shadow: 0 0 8px #00ccff88;
+  }
+
+  form {
+    margin: 0;
+  }
+
+  button.btn-sm {
+    font-size: 0.9rem;
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  button.btn-sm.btn-danger {
+    background-color: #e84118;
+    color: white;
+    box-shadow: 0 0 8px #e8411888;
+  }
+
+  button.btn-sm.btn-danger:hover {
+    background-color: #c23616;
+    box-shadow: 0 0 12px #e84118cc;
+  }
+
+  button.btn-sm.btn-primary {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 8px #00ccff88;
+  }
+
+  button.btn-sm.btn-primary:hover {
+    background-color: #00e5ff;
+    box-shadow: 0 0 12px #00ccffaa;
+  }
+
+  .back-link {
+    display: block;
+    margin: 20px auto;
+    max-width: max-content;
+    color: #00ccff;
+    font-weight: 600;
+  }
+
+  .empty-message {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+</style>
+
+<p><a href="{% url 'home' %}" class="back-link">← Назад на головну</a></p>
 
 <h1>Мої чати</h1>
 
-<p>
-    <a href="{% url 'chat:group_chat_create' %}" class="btn btn-success">➕ Створити груповий чат</a>
+<p style="text-align:center;">
+  <a href="{% url 'chat:group_chat_create' %}" class="btn">➕ Створити груповий чат</a>
 </p>
 
-<ul>
-    {% for chat in chats %}
-        <li>
-            <a href="{% url 'chat:chat_detail' pk=chat.id %}">
-                {% if chat.group_chat %}
-                    {{ chat.name|default:"(Без назви)" }}
-                {% else %}
-                    Приватний чат з
-                    {% for participant in chat.participants.all %}
-                        {% if participant != request.user %}
-                            {{ participant.username }}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </a>
-
-            {% if chat.group_chat %}
-                {% if request.user in chat.participants.all %}
-                    <!-- Кнопка "Вийти" -->
-                    <form action="{% url 'chat:leave_group_chat' chat.pk %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-danger">Вийти</button>
-                    </form>
-                {% else %}
-                    <!-- Кнопка "Приєднатися" -->
-                    <form action="{% url 'chat:join_group' chat.pk %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-primary">Приєднатися</button>
-                    </form>
-                {% endif %}
+<ul class="chat-list">
+  {% for chat in chats %}
+    <li>
+      <a href="{% url 'chat:chat_detail' pk=chat.id %}" class="chat-link" title="{% if chat.group_chat %}Груповий чат{% else %}Приватний чат{% endif %}">
+        {% if chat.group_chat %}
+          {{ chat.name|default:"(Без назви)" }}
+        {% else %}
+          {% for participant in chat.participants.all %}
+            {% if participant != request.user %}
+              <img src="{{ participant.profile.avatar.url }}" alt="Аватар {{ participant.username }}" class="avatar" onerror="this.onerror=null;this.src='/static/default_avatar.png';">
+              {{ participant.username }}
             {% endif %}
-        </li>
-    {% empty %}
-        <li>У вас поки немає чатів</li>
-    {% endfor %}
-</ul>
+          {% endfor %}
+        {% endif %}
+      </a>
 
+      {% if chat.group_chat %}
+        {% if request.user in chat.participants.all %}
+          <form action="{% url 'chat:leave_group_chat' chat.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-sm btn-danger" title="Вийти з групового чату">Вийти</button>
+          </form>
+        {% else %}
+          <form action="{% url 'chat:join_group' chat.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-sm btn-primary" title="Приєднатися до групового чату">Приєднатися</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </li>
+  {% empty %}
+    <li class="empty-message">У вас поки немає чатів</li>
+  {% endfor %}
+</ul>
 {% endblock %}

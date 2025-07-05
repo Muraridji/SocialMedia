@@ -1,9 +1,79 @@
 {% extends 'base/base.html' %}
 {% block content %}
-<h2>Видалити коментар?</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Так, видалити</button>
-    <a href="{% url 'posts:post_detail' object.post.pk %}">Скасувати</a>
-</form>
+<style>
+  .delete-container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-wrapper {
+    background-color: #1a1f40;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #00ccff;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    color: #a0eaff;
+  }
+
+  h2 {
+    color: #00ccff;
+    text-shadow: 0 0 8px #00ccff;
+    margin-bottom: 25px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  button, a.cancel {
+    font-size: 1em;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  button {
+    background-color: #004466;
+    color: #00ccff;
+    box-shadow: 0 0 6px #00ccff;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 12px #00ccff;
+  }
+
+  a.cancel {
+    background-color: transparent;
+    color: #a0eaff;
+  }
+
+  a.cancel:hover {
+    color: #66f0ff;
+    text-shadow: 0 0 10px #66f0ff;
+  }
+</style>
+
+<div class="delete-container">
+  <div class="delete-wrapper">
+    <h2>Видалити коментар?</h2>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">✅ Так, видалити</button>
+      <a href="{% url 'posts:post_detail' object.post.pk %}" class="cancel">❌ Скасувати</a>
+    </form>
+  </div>
+</div>
 {% endblock %}

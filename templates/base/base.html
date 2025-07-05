@@ -1,34 +1,241 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Мій сайт{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}LynkR{% endblock %}</title>
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      background-color: #313338;
+      font-family: "Segoe UI", sans-serif;
+      color: #dcddde;
+      overflow: hidden; /* Вимикаємо прокрутку сторінки */
+    }
+
+    .layout-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar-left {
+      width: 72px;
+      background-color: #1e1f22;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      gap: 20px;
+    }
+
+    .sidebar-left a {
+      text-decoration: none;
+      color: #b9bbbe;
+      font-size: 24px;
+    }
+
+    .sidebar-left a:hover {
+      color: #fff;
+    }
+
+    .chat-sidebar {
+      width: 260px;
+      background-color: #2b2d31;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .chat-sidebar h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 14px;
+    }
+
+    .chat-item {
+      background-color: #383a40;
+      padding: 8px 12px;
+      border-radius: 5px;
+      color: #dcddde;
+      text-decoration: none;
+    }
+
+    .chat-item:hover {
+      background-color: #4e5058;
+    }
+
+    .profile-summary {
+      border-top: 1px solid #444;
+      padding-top: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .profile-summary img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #555;
+      flex-shrink: 0;
+    }
+
+    .profile-summary .info {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .profile-summary .info .username {
+      font-weight: 700;
+      font-size: 1.1em;
+      color: #faa61a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-summary .info .role {
+      font-size: 0.9em;
+      color: #999;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-summary a.edit-link {
+      color: #7289da;
+      font-size: 0.9em;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .profile-summary a.edit-link:hover {
+      text-decoration: underline;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #313338;
+    }
+
+    .sidebar-right {
+      width: 300px;
+      background-color: #2b2d31;
+      padding: 20px;
+      overflow-y: auto;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-light text-dark">
+<body>
+  <div class="layout-container">
+    <aside class="sidebar-left">
+      {% if user.is_authenticated %}
+        <a href="{% url 'home' %}" title="Головна">🏠</a>
+        <a href="{% url 'posts:post_list' %}" title="Пости">📄</a>
+        <a href="{% url 'chat:chat_list' %}" title="Чати">💬</a>
+        <a href="{% url 'groups:group_list' %}" title="Групи">👥</a>
+        <a href="{% url 'accounts:friends_list' user.username %}" title="Друзі">👤</a>
+          🔔
+          {% if unread_notifications_count > 0 %}
+            <span style="
+              position: absolute;
+              top: -6px;
+              right: -10px;
+              background-color: #f04747;
+              color: white;
+              font-size: 11px;
+              font-weight: bold;
+              padding: 2px 6px;
+              border-radius: 12px;
+              line-height: 1;
+            ">
+              {{ unread_notifications_count }}
+            </span>
+          {% endif %}
+        </a>
 
-<nav>
-    <a href="{% url 'home' %}">🏠 Головна</a>
+        <a href="{% url 'accounts:user-profile' request.user.username %}" title="Профіль">⚙️</a>
+        <a href="{% url 'accounts:logout' %}" title="Вихід" style="color: #f04747;">🚪</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}" title="Вхід">🔐</a>
+        <a href="{% url 'accounts:signup' %}" title="Реєстрація">📝</a>
+      {% endif %}
+    </aside>
 
-    {% if request.user.is_authenticated %}
-        <a href="{% url 'accounts:user-profile' request.user.username %}">👤 Профіль</a>
-        <a href="{% url 'accounts:friends_list' request.user.username %}">👥 Друзі</a>
-    {% else %}
-        <a href="{% url 'accounts:login' %}">Увійти</a>
-    {% endif %}
+    <aside class="chat-sidebar">
+      <h3>Чати</h3>
+      <div class="chat-list">
+        {% if user.is_authenticated %}
+          {% for chat in user.chats.all %}
+            <a href="{% url 'chat:chat_detail' chat.id %}" class="chat-item">
+              {% if chat.is_group %}
+                {{ chat.name }}
+              {% else %}
+                {% for participant in chat.participants.all %}
+                  {% if participant != user %}{{ participant.username }}{% endif %}
+                {% endfor %}
+              {% endif %}
+            </a>
+          {% empty %}
+            <span style="color: #888">Немає чатів</span>
+          {% endfor %}
+        {% endif %}
+      </div>
 
-    <a href="{% url 'accounts:user_list' %}">🔍 Користувачі</a>
-    <a href="{% url 'accounts:friend_request' %}">📨 Запити</a>
-    <a href="{% url 'chat:chat_list' %}">💬 Чати</a>
-</nav>
-<hr>
+      {% if user.is_authenticated %}
+        <div class="profile-summary">
+          {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Аватар користувача">
+          {% else %}
+            <img src="{% static 'default_avatar.png' %}" alt="Аватар за замовчуванням">
+          {% endif %}
+          <div class="info">
+            <div class="username">{{ user.username }}</div>
+            <div class="role">{{ user.get_role_display }}</div>
+          </div>
+          <a href="{% url 'accounts:edit-profile' %}" class="edit-link">Редагувати</a>
+        </div>
+      {% endif %}
+    </aside>
 
-<div class="container">
-    {% block content %}
-    {% endblock %}
-</div>
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <aside class="sidebar-right">
+      {% block sidebar %}
+        {% if user.is_authenticated %}
+          <h4>Активний зараз</h4>
+          <p style="color: #999; font-size: 14px;">
+            Зараз тут тихо...<br />
+            Коли твій друг почне активну діяльність — наприклад, гра або голосовий чат — ми покажемо це тут!
+          </p>
+        {% endif %}
+      {% endblock %}
+    </aside>
+  </div>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

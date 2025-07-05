@@ -1,25 +1,194 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+<style>
+  .edit-profile-container {
+    max-width: 900px;
+    margin: 30px auto 60px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0f7ff;
+  }
 
-    <header>
-        <h1>Редагувати профіль: {{ user.username }}</h1>
-    </header>
+  .edit-profile-header {
+    background-color: #121224;
+    padding: 24px 32px;
+    border-radius: 14px;
+    box-shadow:
+      0 0 8px #00ccff55,
+      0 0 18px #00ccffaa;
+    margin-bottom: 24px;
+  }
 
-    <main>
-        <section>
-            <h2>Форма редагування</h2>
-            {% if form.errors %}
-              <div style="color: red;">
-                {{ form.errors }}
-              </div>
-            {% endif %}
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Зберегти зміни</button>
-            </form>
-        </section>
-    </main>
+  .edit-profile-header h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    text-shadow: 0 0 8px #00e5ffbb;
+    margin: 0;
+  }
 
+  .edit-profile-section {
+    background-color: #121224;
+    padding: 28px 32px;
+    border-radius: 14px;
+    box-shadow:
+      0 0 10px #00ccff33,
+      0 0 25px #00ccffaa;
+  }
+
+  .edit-profile-section h2 {
+    color: #00ccff;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-shadow: 0 0 6px #00e5ffbb;
+  }
+
+  .form-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+    align-items: flex-start;
+  }
+
+  /* Для текстовых полей на всю ширину (например, bio, аватар) */
+  form .full-width {
+    grid-column: 1 / -1;
+  }
+
+  /* Контейнер для каждого поля с плавающей меткой */
+  .input-group {
+    position: relative;
+    font-size: 1rem;
+    color: #a0eaff;
+  }
+
+  /* Скрываем лейбл, но он нужен для плавающей метки */
+  .input-group label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    color: #6ea8c0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    background-color: #121224;
+    padding: 0 6px;
+    border-radius: 4px;
+  }
+
+  /* Поля */
+  .input-group input,
+  .input-group textarea,
+  .input-group select {
+    width: 100%;
+    padding: 18px 14px 6px 14px;
+    background-color: #10172d;
+    border: 2px solid #00ccff;
+    border-radius: 10px;
+    color: #a0eaff;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+  }
+
+  /* При фокусе или если поле заполнено — лейбл поднимается */
+  .input-group input:focus + label,
+  .input-group input:not(:placeholder-shown) + label,
+  .input-group textarea:focus + label,
+  .input-group textarea:not(:placeholder-shown) + label,
+  .input-group select:focus + label,
+  .input-group select:not([value=""]) + label {
+    top: -8px;
+    left: 10px;
+    font-size: 0.75rem;
+    color: #00ffff;
+    text-shadow: 0 0 8px #00ffffcc;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 10px #00ffffcc;
+  }
+
+  textarea {
+    min-height: 90px;
+  }
+
+  button {
+    grid-column: 1 / -1;
+    background-color: #00ccff;
+    color: #121224;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 28px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    justify-self: start;
+  }
+
+  button:hover {
+    background-color: #00ffff;
+  }
+
+  .errors {
+    grid-column: 1 / -1;
+    background-color: #330000;
+    color: #ff6666;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="edit-profile-container">
+  <header class="edit-profile-header">
+    <h1>Редагувати профіль: {{ user.username }}</h1>
+  </header>
+
+  <main>
+    <section class="edit-profile-section">
+      <h2>Форма редагування</h2>
+      <div class="form-wrapper">
+        {% if form.errors %}
+          <div class="errors">
+            {{ form.errors }}
+          </div>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          {# Предполагаем, что у формы есть поля: username, email, bio, avatar #}
+          <div class="input-group">
+            {{ form.username }}
+            <label for="{{ form.username.id_for_label }}">Ім'я користувача</label>
+          </div>
+
+          <div class="input-group">
+            {{ form.email }}
+            <label for="{{ form.email.id_for_label }}">Email</label>
+          </div>
+
+          <div class="input-group full-width">
+            {{ form.bio }}
+            <label for="{{ form.bio.id_for_label }}">Bio</label>
+          </div>
+
+          <div class="input-group full-width">
+            {{ form.avatar }}
+            <label for="{{ form.avatar.id_for_label }}">Аватар</label>
+          </div>
+
+          <button type="submit">Зберегти зміни</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
 {% endblock %}

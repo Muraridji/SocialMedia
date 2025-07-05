@@ -1,18 +1,98 @@
 {% extends 'base/base.html' %}
 {% block content %}
+<style>
+  body {
+    background-color: #121224; /* темно-синий фон */
+    color: #a0eaff; /* светло-голубой/неоновый текст */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h1 {
+    color: #00ccff;
+    text-shadow: 0 0 8px #00ccff;
+    margin-bottom: 20px;
+  }
+
+  a {
+    color: #00ccff;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  a:hover {
+    color: #66f0ff;
+    text-shadow: 0 0 12px #66f0ff;
+  }
+
+  a.new-post {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    background-color: #1a1f40;
+    margin-bottom: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #00ccff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  li a.post-link {
+    font-weight: 600;
+    flex-grow: 1;
+    color: #a0eaff;
+  }
+
+  li span.creator {
+    margin-left: 15px;
+    font-size: 0.9em;
+    color: #66f0ff;
+    user-select: none;
+  }
+
+  li .actions a {
+    margin-left: 10px;
+    font-size: 1.1em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #004466;
+    box-shadow: 0 0 6px #00ccff;
+    color: #00ccff;
+  }
+
+  li .actions a:hover {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 12px #00ccff;
+  }
+</style>
+
 <h1>Пости</h1>
-<a href="{% url 'posts:post_create' %}">➕ Новий пост</a>
+<a href="{% url 'posts:post_create' %}" class="new-post">➕ Новий пост</a>
+
 <ul>
-    {% for post in posts %}
-        <li>
-            <a href="{% url 'posts:post_detail' post.pk %}">{{ post.title }}</a> — {{ post.creator }}
-            {% if post.creator == request.user %}
-                <a href="{% url 'posts:post_update' post.pk %}">✏️</a>
-                <a href="{% url 'posts:post_delete' post.pk %}">🗑️</a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>Постів немає.</li>
-    {% endfor %}
+  {% for post in posts %}
+    <li>
+      <a href="{% url 'posts:post_detail' post.pk %}" class="post-link">{{ post.title }}</a>
+      <span class="creator">— {{ post.creator }}</span>
+      {% if post.creator == request.user %}
+      <div class="actions">
+        <a href="{% url 'posts:post_update' post.pk %}" title="Редагувати">✏️</a>
+        <a href="{% url 'posts:post_delete' post.pk %}" title="Видалити">🗑️</a>
+      </div>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>Постів немає.</li>
+  {% endfor %}
 </ul>
 {% endblock %}

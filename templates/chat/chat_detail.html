@@ -1,93 +1,252 @@
 {% extends 'base/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
 
 {% block content %}
-<h1>
-    {% if chats.group_chat %}
-        {{ chats.name }}
-    {% else %}
-        Приватний чат з 
-        {% for user in chats.participants.all %}
-            {% if user != request.user %}
-                {{ user.username }}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-</h1>
+<style>
+body {
+  background-color: #121224;
+  color: #a0eaff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-<div>
-    <h2>Повідомлення</h2>
-    <ul>
-        {% for message in messages %}
-            <li>
-                <strong>{{ message.author.username }}:</strong> 
-                {{ message.content }}
-                {% if message.media %}
-                    <div><a href="{{ message.media.url }}">[Прикріплений файл]</a></div>
-                {% endif %}
-                <small>({{ message.created_at|date:"d.m.Y H:i" }})</small>
-            </li>
-        {% empty %}
-            <li>Ще немає повідомлень</li>
-        {% endfor %}
-    </ul>
+h2 {
+  text-align: center;
+  margin: 30px 0 40px 0;
+  color: #00ccff;
+  text-shadow: 0 0 8px #00e5ffbb;
+}
+
+.message {
+  background-color: #15304a;
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 0 8px #00ccff88;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #00ccff;
+  box-shadow: 0 0 10px #00ccff88;
+  overflow: hidden;
+  background-color: #22334d;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00ccff;
+  font-weight: 700;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.message-content {
+  flex: 1;
+}
+
+.author-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #00ccff;
+  margin-bottom: 6px;
+}
+
+.message-text {
+  color: #a0eaff;
+  line-height: 1.4;
+}
+
+.timestamp {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #77aacc;
+  user-select: none;
+}
+
+.chat-container {
+  max-width: 700px;
+  margin: 0 auto 60px auto;
+  background-color: #10172d;
+  border-radius: 14px;
+  box-shadow: 0 0 8px #00ccff55, 0 0 20px #00ccffaa;
+  padding: 20px;
+  height: 500px; /* высота окна сообщений */
+  overflow-y: auto;
+}
+
+form.message-form {
+  max-width: 700px;
+  margin: 0 auto 60px auto;
+  display: flex;
+  gap: 14px;
+  align-items: stretch; /* чтобы элементы растягивались по высоте */
+  height: 500px; /* высота формы такая же, как у окна сообщений */
+}
+
+form.message-form textarea,
+form.message-form input[type="text"] {
+  flex: 1;
+  background-color: #10172d;
+  border: none;
+  border-radius: 14px;
+  padding: 18px 24px;
+  color: #a0eaff;
+  font-size: 1rem;
+  resize: none;
+  box-shadow: inset 0 0 6px #00ccff44;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 30%; /* чтобы textarea занимал всю высоту формы */
+  min-height: unset; /* убираем min-height, чтобы не мешал */
+}
+
+form.message-form textarea::placeholder,
+form.message-form input::placeholder {
+  color: #77aaccaa;
+}
+
+form.message-form button {
+  background-color: #00ccff;
+  border: none;
+  border-radius: 14px;
+  padding: 0 30px;
+  font-weight: 700;
+  color: #121224;
+  cursor: pointer;
+  box-shadow: 0 0 12px #00ccffaa;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  height: 30%; /* кнопка тоже по высоте как textarea */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* кнопка не сжимается */
+}
+
+form.message-form button:hover {
+  background-color: #00e5ff;
+  box-shadow: 0 0 20px #00e5ffaa;
+}
+</style>
+
+<h2>
+  {% if chats.group_chat %}
+    {{ chats.name }}
+  {% else %}
+    Приватний чат з
+    {% for user in chats.participants.all %}
+      {% if user != request.user %}
+        {{ user.username }}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+</h2>
+
+<div class="chat-container" id="chat-messages">
+  {% for message in messages %}
+  <div class="message">
+    <div class="avatar">
+      {% if message.author.avatar %}
+        <img src="{{ message.author.avatar.url }}" alt="{{ message.author.username }}">
+      {% else %}
+        {{ message.author.username|slice:":1"|upper }}
+      {% endif %}
+    </div>
+    <div class="message-content">
+      <div class="author-name">{{ message.author.username }}</div>
+      <div class="message-text">{{ message.content|linebreaksbr }}</div>
+      {% if message.media %}
+        <div><a href="{{ message.media.url }}" style="color:#00ccff;">[Прикріплений файл]</a></div>
+      {% endif %}
+      <div class="timestamp">{{ message.created_at|date:"d.m.Y H:i" }}</div>
+    </div>
+  </div>
+  {% empty %}
+  <p style="text-align:center; color:#77aacc;">Поки що немає повідомлень.</p>
+  {% endfor %}
 </div>
 
-<div>
-    <h3>Надіслати повідомлення</h3>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ message_form.as_p }}
-        <button type="submit">Надіслати</button>
-    </form>
-</div>
+<form method="post" enctype="multipart/form-data" class="message-form" autocomplete="off">
+  {% csrf_token %}
+  {{ message_form.content|default:message_form.as_p }}
+  <button type="submit">Надіслати</button>
+</form>
 
-<a href="{% url 'chat:chat_list' %}">← Назад до списку чатів</a>
-
+<a href="{% url 'chat:chat_list' %}" style="display: block; text-align:center; color:#00ccff; margin-bottom: 30px; text-decoration:none;">
+  ← Назад до списку чатів
+</a>
 
 <script>
-    const chatId = "{{ chats.id }}";
-    console.log(chatId);
-    const userName = "{{ request.user.username }}";
+  const chatId = "{{ chats.id }}";
+  const userName = "{{ request.user.username }}";
 
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/${chatId}/`);
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/${chatId}/`);
 
-    // ✅ Добавляем сюда
-    chatSocket.onopen = function() {
-        console.log("WebSocket connection established.");
-    };
+  chatSocket.onopen = function() {
+    console.log("WebSocket connection established.");
+  };
 
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const message = data.message;
-        const username = data.username;
-        const createdAt = data.created_at;
+  chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const message = data.message;
+    const username = data.username;
+    const createdAt = data.created_at;
 
-        const messagesList = document.querySelector('ul');
-        const newMessage = document.createElement('li');
-        newMessage.innerHTML = `<strong>${username}:</strong> ${message} <small>(${createdAt})</small>`;
-        messagesList.appendChild(newMessage);
-    };
+    const messagesList = document.getElementById('chat-messages');
+    const newMessage = document.createElement('div');
+    newMessage.classList.add('message');
 
-    chatSocket.onclose = function(e) {
-        console.error('WebSocket closed unexpectedly');
-    };
+    newMessage.innerHTML = `
+      <div class="avatar">${username.charAt(0).toUpperCase()}</div>
+      <div class="message-content">
+        <div class="author-name">${username}</div>
+        <div class="message-text">${message}</div>
+        <div class="timestamp">${createdAt}</div>
+      </div>
+    `;
 
-    document.querySelector('form').onsubmit = function(e) {
-        e.preventDefault();
-        const messageInput = document.querySelector('textarea, input[name="content"]');
-        const message = messageInput.value;
+    messagesList.appendChild(newMessage);
+    messagesList.scrollTop = messagesList.scrollHeight;
+  };
 
-        if (message.trim() !== "") {
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInput.value = '';
-        } else {
-            alert("Введіть повідомлення.");
-        }
-    };
+  chatSocket.onclose = function(e) {
+    console.error('WebSocket closed unexpectedly');
+  };
+
+  document.querySelector('form.message-form').onsubmit = function(e) {
+    e.preventDefault();
+    const messageInput = document.querySelector('form.message-form textarea, form.message-form input[name="content"]');
+    const message = messageInput.value;
+
+    if (message.trim() !== "") {
+      chatSocket.send(JSON.stringify({
+        'message': message
+      }));
+      messageInput.value = '';
+    } else {
+      alert("Введіть повідомлення.");
+    }
+  };
+
+  // Скролл в самый низ при загрузке страницы
+  const chatBox = document.getElementById('chat-messages');
+  if(chatBox){
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 </script>
-
 
 {% endblock %}

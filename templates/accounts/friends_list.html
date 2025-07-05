@@ -2,17 +2,137 @@
 {% load friend_tags %}
 
 {% block content %}
-<h2>Друзі {{ profile_user.username }}</h2>
-<ul>
-    {% for friend in friends %}
-        <li>
-            <a href="{% url 'accounts:user-profile' friend.username %}">{{ friend.username }}</a>
-            {% if profile_user == request.user %}
-                <a href="{% url 'accounts:remove_friend' friend.username %}">❌</a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>Немає друзів</li>
-    {% endfor %}
+<style>
+  body {
+    background-color: #121224;
+    color: #a0eaff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h2 {
+    text-align: center;
+    margin: 30px 0 40px 0;
+    color: #00ccff;
+    text-shadow: 0 0 8px #00e5ffbb;
+  }
+
+  ul.friend-list {
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul.friend-list li {
+    background-color: #10172d;
+    padding: 14px 24px;
+    border-radius: 14px;
+    box-shadow:
+      0 0 8px #00ccff55,
+      0 0 20px #00ccffaa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  ul.friend-list li:hover {
+    background-color: #15304a;
+  }
+
+  .friend-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .friend-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #00ccff;
+    box-shadow: 0 0 10px #00ccff88;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #22334d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ccff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    user-select: none;
+  }
+
+  .friend-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .friend-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #a0eaff;
+    user-select: none;
+    text-decoration: none;
+  }
+
+  .actions a {
+    font-size: 1.3rem;
+    margin-left: 18px;
+    color: #00ccff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+  }
+
+  .actions a.remove:hover {
+    color: #ff5555;
+    text-shadow: 0 0 12px #ff5555bb;
+  }
+
+  .no-friends {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 24px;
+    text-align: center;
+    font-size: 1.3rem;
+    color: #77aacc;
+    background-color: #10172d;
+    border-radius: 14px;
+    box-shadow:
+      0 0 8px #00ccff55,
+      0 0 20px #00ccffaa;
+    user-select: none;
+  }
+</style>
+
+<h2>Моi друзi</h2>
+
+<ul class="friend-list">
+  {% for friend in friends %}
+    <li>
+      <div class="friend-info">
+        <div class="friend-avatar">
+          {% if friend.profile.avatar %}
+            <img src="{{ friend.profile.avatar.url }}" alt="{{ friend.username }}'s avatar" />
+          {% else %}
+            {{ friend.username|slice:":1"|upper }}
+          {% endif %}
+        </div>
+        <a href="{% url 'accounts:user-profile' friend.username %}" class="friend-name">{{ friend.username }}</a>
+      </div>
+      {% if profile_user == request.user %}
+      <div class="actions">
+        <a href="{% url 'accounts:remove_friend' friend.username %}" class="remove" title="Видалити з друзів">❌</a>
+      </div>
+      {% endif %}
+    </li>
+  {% empty %}
+    <div class="no-friends">Немає друзів</div>
+  {% endfor %}
 </ul>
 {% endblock %}

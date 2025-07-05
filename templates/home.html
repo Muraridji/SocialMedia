@@ -1,9 +1,41 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    <h1>Головна сторінка</h1>
-    <p>Вітаємо, {{ request.user.username }}!</p>
-    <p><a href="{% url 'accounts:user_list' %}">🔎 Знайти нових друзів</a></p>
-    <p><a href="{% url 'chat:chat_list' %}">💬 Перейти до чатів</a></p>
-    <p><a href="{% url 'accounts:friend_request' %}">📨 Перевірити запити в друзі</a></p>
+<style>
+  body {
+    background-color: #121224;
+    color: #a0eaff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h1 {
+    color: #00ccff;
+    text-shadow: 0 0 8px #00ccff;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+
+  a {
+    color: #00ccff;
+    text-decoration: none;
+    font-weight: 600;
+    text-shadow: 0 0 6px #00ccff;
+    transition: color 0.3s ease;
+  }
+
+  a:hover {
+    color: #66f0ff;
+    text-shadow: 0 0 20px #66f0ff;
+  }
+</style>
+
+<h1>Головна сторінка</h1>
+<p>Вітаємо, {{ request.user.username }}!</p>
+<p><a href="{% url 'accounts:user_list' %}">🔎 Знайти нових друзів</a></p>
+<p><a href="{% url 'chat:chat_list' %}">💬 Перейти до чатів</a></p>
+<p><a href="{% url 'accounts:friend_request' %}">📨 Перевірити запити в друзі</a></p>
 {% endblock %}

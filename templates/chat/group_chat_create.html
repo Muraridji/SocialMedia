@@ -1,14 +1,123 @@
 {% extends "base/base.html" %}
 {% block content %}
 
-<h2>Створити груповий чат</h2>
+<style>
+  .form-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  .form-container {
+    background: #121224;
+    padding: 30px;
+    border-radius: 15px;
+    width: 400px;
+    color: #a0eaff;
+    box-shadow: 0 0 15px #00ccff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #00ccff;
+  }
+  input[type="text"],
+  textarea,
+  input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 2px solid #00ccff;
+    border-radius: 8px;
+    background: #121224;
+    color: #a0eaff;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+  input[type="text"]::placeholder,
+  textarea::placeholder {
+    color: #444;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #00ccff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #121224;
+    box-shadow: 0 0 15px #00ccff;
+    transition: background-color 0.3s ease;
+  }
+  .submit-btn:hover {
+    background: #00aacc;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #00ccff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  .errorlist {
+    color: #ff5555;
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+  small {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    color: #a0eaff;
+    opacity: 0.7;
+  }
+</style>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Створити</button>
-</form>
+<div class="form-wrapper">
+  <div class="form-container">
+    <h2>Створити груповий чат</h2>
 
-<a href="{% url 'chat:chat_list' %}" class="btn btn-secondary mt-3">Назад до списку чатів</a>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <label for="{{ form.name.id_for_label }}">Назва чату</label>
+      {{ form.name }}
+      {% if form.name.errors %}
+        <div class="errorlist">{{ form.name.errors }}</div>
+      {% endif %}
+      <small>Введіть унікальну назву вашого групового чату</small>
+
+      <label for="id_description">Опис (опціонально)</label>
+      <textarea name="description" id="id_description" placeholder="Опишіть тематику чату або правила...">{{ form.description.value }}</textarea>
+      {% if form.description.errors %}
+        <div class="errorlist">{{ form.description.errors }}</div>
+      {% endif %}
+      <small>Коротко розкажіть про тематику чи правила чату</small>
+
+      <label for="{{ form.avatar.id_for_label }}">Аватар групи</label>
+      {{ form.avatar }}
+      {% if form.avatar.errors %}
+        <div class="errorlist">{{ form.avatar.errors }}</div>
+      {% endif %}
+      <small>Виберіть картинку, що відображатиме вашу групу</small>
+
+      <button type="submit" class="submit-btn">Створити</button>
+    </form>
+
+    <a href="{% url 'chat:chat_list' %}" class="back-link">← Назад до списку чатів</a>
+  </div>
+</div>
 
 {% endblock %}
