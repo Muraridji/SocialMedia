@@ -1,5 +1,4 @@
 {% extends 'base/base.html' %}
-{% load friend_tags %}
 
 {% block content %}
 <style>
@@ -9,130 +8,108 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
-  h2 {
+  h1 {
     text-align: center;
-    margin: 30px 0 40px 0;
+    margin: 30px 0 20px 0;
+    font-weight: 700;
+    font-size: 2rem;
     color: #00ccff;
     text-shadow: 0 0 8px #00e5ffbb;
   }
 
-  ul.friend-list {
+  .search-form {
+    max-width: 500px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .search-form input[type="text"] {
+    padding: 10px;
+    border: 2px solid #00ccff;
+    border-radius: 8px;
+    background-color: #10172d;
+    color: #a0eaff;
+    width: 100%;
+  }
+
+  .search-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #00ccff;
+    color: #121224;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-form button:hover {
+    background-color: #00e5ff;
+  }
+
+  ul.friends-list {
     max-width: 700px;
-    margin: 0 auto 60px auto;
+    margin: 0 auto;
     padding: 0;
     list-style: none;
   }
 
-  ul.friend-list li {
+  ul.friends-list li {
     background-color: #10172d;
-    padding: 14px 24px;
     border-radius: 14px;
-    box-shadow:
-      0 0 8px #00ccff55,
-      0 0 20px #00ccffaa;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 16px 24px;
     margin-bottom: 16px;
-    transition: background-color 0.3s ease;
-  }
-
-  ul.friend-list li:hover {
-    background-color: #15304a;
-  }
-
-  .friend-info {
+    box-shadow: 0 0 8px #00ccff55;
     display: flex;
     align-items: center;
     gap: 14px;
   }
 
-  .friend-avatar {
-    width: 48px;
-    height: 48px;
+  .avatar {
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    border: 2px solid #00ccff;
-    box-shadow: 0 0 10px #00ccff88;
-    overflow: hidden;
-    flex-shrink: 0;
-    background-color: #22334d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #00ccff;
-    font-weight: 700;
-    font-size: 1.2rem;
-    user-select: none;
-  }
-
-  .friend-avatar img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-    display: block;
+    border: 2px solid #00ccff;
   }
 
-  .friend-name {
-    font-weight: 600;
+  .username {
     font-size: 1.1rem;
+    font-weight: 600;
     color: #a0eaff;
-    user-select: none;
-    text-decoration: none;
   }
 
-  .actions a {
-    font-size: 1.3rem;
-    margin-left: 18px;
-    color: #00ccff;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
-  }
-
-  .actions a.remove:hover {
-    color: #ff5555;
-    text-shadow: 0 0 12px #ff5555bb;
-  }
-
-  .no-friends {
-    max-width: 700px;
-    margin: 60px auto;
-    padding: 24px;
+  .empty-message {
     text-align: center;
-    font-size: 1.3rem;
-    color: #77aacc;
-    background-color: #10172d;
-    border-radius: 14px;
-    box-shadow:
-      0 0 8px #00ccff55,
-      0 0 20px #00ccffaa;
-    user-select: none;
+    font-style: italic;
+    color: #888;
+    margin-top: 20px;
   }
 </style>
 
-<h2>Моi друзi</h2>
+<h1>Друзі</h1>
 
-<ul class="friend-list">
+<div style="text-align: center; margin-bottom: 30px;">
+  <a href="{% url 'accounts:user_list' %}" style="padding: 10px 20px; background-color: #00ccff; color: #121224; border-radius: 10px; font-weight: bold; text-decoration: none; box-shadow: 0 0 10px #00ccffaa;">👥 Знайти друзів</a>
+</div>
+
+<form method="get" class="search-form">
+  <input type="text" name="search" placeholder="Пошук друга за ніком" value="{{ request.GET.search }}">
+  <button type="submit">🔍 Пошук</button>
+</form>
+
+<ul class="friends-list">
   {% for friend in friends %}
     <li>
-      <div class="friend-info">
-        <div class="friend-avatar">
-          {% if friend.profile.avatar %}
-            <img src="{{ friend.profile.avatar.url }}" alt="{{ friend.username }}'s avatar" />
-          {% else %}
-            {{ friend.username|slice:":1"|upper }}
-          {% endif %}
-        </div>
-        <a href="{% url 'accounts:user-profile' friend.username %}" class="friend-name">{{ friend.username }}</a>
-      </div>
-      {% if profile_user == request.user %}
-      <div class="actions">
-        <a href="{% url 'accounts:remove_friend' friend.username %}" class="remove" title="Видалити з друзів">❌</a>
-      </div>
+      {% if friend.profile.avatar %}
+        <img src="{{ friend.profile.avatar.url }}" alt="Аватар {{ friend.username }}" class="avatar">
       {% endif %}
+      <span class="username">{{ friend.username }}</span>
     </li>
   {% empty %}
-    <div class="no-friends">Немає друзів</div>
+    <li class="empty-message">Друзів не знайдено</li>
   {% endfor %}
 </ul>
 {% endblock %}

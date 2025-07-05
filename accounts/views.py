@@ -58,7 +58,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("accounts:home")
+    return redirect("home")
 
 
 @login_required
@@ -143,6 +143,11 @@ class FriendsListView(LoginRequiredMixin, View):
         friends2 = Friendship.objects.filter(user2=user).values_list('user1', flat=True)
         friends_ids = list(friends1) + list(friends2)
         friends = CustomUser.objects.filter(id__in=friends_ids)
+
+        search_query = request.GET.get('search', '')
+        if search_query:
+            friends = friends.filter(username__icontains=search_query)
+
         return render(request, 'accounts/friends_list.html', {
             'friends': friends,
             'profile_user': user

@@ -1,0 +1,30 @@
+{% load friend_tags %}
+
+<div class="user-info">
+  <div class="user-avatar">
+    {% if user.avatar %}
+      <img class="avatar-small" src="{{ user.avatar.url }}" alt="Аватар {{ user.username }}">
+    {% else %}
+      <div class="avatar-letter">
+        {{ user.username|slice:":1"|upper }}
+      </div>
+    {% endif %}
+  </div>
+  <a href="{% url 'accounts:user-profile' user.username %}" class="user-name">{{ user.username }}</a>
+</div>
+
+
+<div class="actions">
+  <a href="{% url 'chat:create_private_chat' user.id %}" class="chat" title="Написати повідомлення">💬</a>
+
+  {% if request.user != user %}
+    {% if user|are_friends:request.user %}
+      <span class="status-text">— Ви друзі</span>
+      <a href="{% url 'accounts:remove_friend' user.username %}" class="friend-remove" title="Видалити з друзів">❌</a>
+    {% elif user|received_request:request.user %}
+      <span class="status-text">— Запит надіслано</span>
+    {% else %}
+      <a href="{% url 'accounts:send_request' user.username %}" class="friend-add" title="Додати в друзі">🤝</a>
+    {% endif %}
+  {% endif %}
+</div>

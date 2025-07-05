@@ -18,7 +18,34 @@ class ChatListView(LoginRequiredMixin, ListView):
     template_name = "chat/chat_list.html"
 
     def get_queryset(self):
-        return Chat.objects.filter(participants=self.request.user).distinct()
+        queryset = super().get_queryset().exclude(username=self.request.user.username)
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(username__icontains=search_query)
+        return queryset
+
+
+class UserListView(ListView):
+    model = CustomUser
+    template_name = 'accounts/user_list.html'
+    context_object_name = 'users'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users_count'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset().exclude(id=self.request.user.id)
+        search_query = self.request.GET.get('search', '').strip()
+        print(f"Search query: '{search_query}'")
+        if search_query:
+            filtered_qs = queryset.filter(username__icontains=search_query)
+            print(f"Filtered count: {filtered_qs.count()}")
+            return filtered_qs
+        print(f"Total count: {queryset.count()}")
+        return queryset
 
 
 class ChatDetailView(DetailView):
