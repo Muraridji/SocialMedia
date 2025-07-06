@@ -17,6 +17,7 @@ class PostListView(ListView):
     model = Post
     context_object_name = "posts"
     template_name = "posts/post_list.html"
+    ordering = ['-created_at']
 
 
 class PostDetailView(DetailView):

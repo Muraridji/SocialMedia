@@ -1,98 +1,195 @@
 {% extends 'base/base.html' %}
 {% block content %}
 <style>
-  body {
-    background-color: #121224; /* темно-синий фон */
-    color: #a0eaff; /* светло-голубой/неоновый текст */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  h1 {
-    color: #00ccff;
-    text-shadow: 0 0 8px #00ccff;
-    margin-bottom: 20px;
-  }
-
-  a {
-    color: #00ccff;
-    text-decoration: none;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
-  }
-
-  a:hover {
-    color: #66f0ff;
-    text-shadow: 0 0 12px #66f0ff;
-  }
-
-  a.new-post {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-    display: inline-block;
-  }
-
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  li {
-    background-color: #1a1f40;
-    margin-bottom: 12px;
-    padding: 12px 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px #00ccff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  li a.post-link {
-    font-weight: 600;
-    flex-grow: 1;
+  html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #121224;
     color: #a0eaff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
   }
 
-  li span.creator {
-    margin-left: 15px;
-    font-size: 0.9em;
-    color: #66f0ff;
-    user-select: none;
-  }
-
-  li .actions a {
-    margin-left: 10px;
-    font-size: 1.1em;
-    padding: 4px 8px;
-    border-radius: 6px;
+  .create-post-btn {
+    display: block;
+    margin: 20px auto;
+    text-align: center;
     background-color: #004466;
-    box-shadow: 0 0 6px #00ccff;
     color: #00ccff;
+    padding: 12px 28px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    box-shadow: 0 0 14px #00ccffaa;
+    width: fit-content;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
   }
 
-  li .actions a:hover {
+  .create-post-btn:hover {
     background-color: #00ccff;
     color: #121224;
-    box-shadow: 0 0 12px #00ccff;
+    box-shadow: 0 0 18px #00ccffdd;
+  }
+
+  .post-container {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 20px 40px;
+    box-sizing: border-box;
+  }
+
+  .post-card {
+    background: linear-gradient(145deg, #1e2348, #151a33);
+    border-radius: 20px;
+    padding: 36px 36px 48px;
+    box-shadow:
+      0 0 15px #00ccffbb,
+      inset 0 0 8px #004466aa;
+    max-width: 650px;
+    width: 100%;
+    color: #a0eaff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 100%;
+  }
+
+  .post-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #00ccff;
+    text-shadow: 0 0 14px #00ccffbb;
+  }
+
+  .post-content {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: #b4e6ff;
+    flex-grow: 1;
+    overflow-y: auto;
+    text-align: left;
+    padding-right: 8px;
+  }
+
+  .creator {
+    font-size: 1rem;
+    color: #66f0ff;
+  }
+
+  .media {
+    margin-top: 12px;
+    max-width: 100%;
+    max-height: 350px;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 0 12px #00ccffaa;
+  }
+
+  video, audio {
+    width: 100%;
+    border-radius: 12px;
+    outline: none;
+    box-shadow: 0 0 12px #00ccffaa;
+  }
+
+  .actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .actions a {
+    font-size: 1.3rem;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #004466;
+    color: #00ccff;
+    box-shadow: 0 0 10px #00ccffbb;
+    text-decoration: none;
+    transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+
+  .actions a:hover {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 18px #00ccffdd;
+  }
+
+  /* Скролл внутри текста, если он длинный */
+  .post-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .post-content::-webkit-scrollbar-thumb {
+    background: #00ccffaa;
+    border-radius: 10px;
+  }
+
+  .post-container {
+    margin-bottom: 80px;
+  }
+
+  .media {
+    margin-top: 20px;
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+    box-shadow: 0 0 15px #00ccffbb;
   }
 </style>
 
-<h1>Пости</h1>
-<a href="{% url 'posts:post_create' %}" class="new-post">➕ Новий пост</a>
+<a href="{% url 'posts:post_create' %}" class="create-post-btn">➕ Створити пост</a>
 
-<ul>
-  {% for post in posts %}
-    <li>
-      <a href="{% url 'posts:post_detail' post.pk %}" class="post-link">{{ post.title }}</a>
-      <span class="creator">— {{ post.creator }}</span>
-      {% if post.creator == request.user %}
-      <div class="actions">
-        <a href="{% url 'posts:post_update' post.pk %}" title="Редагувати">✏️</a>
-        <a href="{% url 'posts:post_delete' post.pk %}" title="Видалити">🗑️</a>
+{% for post in posts %}
+  <div class="post-container" style="margin-bottom: 100px;">
+    <div class="post-card" style="height: 350px;">
+      <div class="post-header" style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+        <div class="post-author" style="font-size: 0.8rem; color: #66f0ff; margin-bottom: 4px;">
+            Автор: {{ post.creator.username }}
+        </div>
+        <div class="post-title" style="font-size: 1.4rem; font-weight: 700; color: #00ccff; text-shadow: 0 0 8px #00ccff88;">
+          {{ post.title }}
+        </div>
       </div>
-      {% endif %}
-    </li>
-  {% empty %}
-    <li>Постів немає.</li>
-  {% endfor %}
-</ul>
+
+      <div class="post-media" style="margin-bottom: 20px; display: flex; justify-content: center; align-items: center;">
+        {% if post.file %}
+          <img src="{{ post.file.url }}" alt="Медіа посту" style="
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            object-fit: contain;
+            box-shadow: 0 0 12px #00ccff66;
+          ">
+        {% endif %}
+      </div>
+
+      <div class="post-content" style="font-size: 1.1rem; color: #a0eaff; margin-bottom: 20px; white-space: pre-wrap;">
+        {{ post.content|linebreaks }}
+      </div>
+
+      <div class="post-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <form action="{% url 'posts:post_like' post.pk %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" style="background: none; border: none; color: #00ccff; font-size: 1.2rem; cursor: pointer;">
+            👍 {{ post.likes.count }}
+          </button>
+        </form>
+
+        <a href="{% url 'posts:post_detail' post.pk %}" style="font-size: 1rem; color: #00ccff; text-decoration: underline;">
+          Детальніше →
+        </a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p style="text-align: center;">Постів поки немає.</p>
+{% endfor %}
 {% endblock %}

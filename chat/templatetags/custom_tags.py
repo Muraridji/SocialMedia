@@ -3,6 +3,8 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name="endswith")
+@register.filter
 def endswith(value, arg):
-    return value.lower().endswith(arg.lower())
+    if not value:
+        return False
+    return str(value).lower().endswith(arg.lower())

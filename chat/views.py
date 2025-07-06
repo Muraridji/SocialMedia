@@ -94,7 +94,7 @@ class PrivateChatCreateView(LoginRequiredMixin, View):
         chat = Chat.objects.create(group_chat=False)
         chat.participants.set([request.user, second_user])
 
-        return redirect('chat:chat_detail', pk=chat.id)
+        return redirect('chat:chat_detail', pk=chat.pk)
 
 
 

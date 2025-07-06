@@ -107,6 +107,7 @@
         <img src="{{ friend.profile.avatar.url }}" alt="Аватар {{ friend.username }}" class="avatar">
       {% endif %}
       <span class="username">{{ friend.username }}</span>
+      <a href="{% url 'chat:create_private_chat' user.id %}" class="chat" title="Написати повідомлення">💬</a>
     </li>
   {% empty %}
     <li class="empty-message">Друзів не знайдено</li>
