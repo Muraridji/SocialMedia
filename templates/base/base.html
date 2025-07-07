@@ -178,6 +178,30 @@
     line-height: 1;
     box-shadow: 0 0 5px #f04747aa;
   }
+
+  .gif-carousel {
+    position: relative;
+    width: 100%;
+    height: 200px; /* або інша бажана висота */
+    overflow: hidden;
+  }
+
+  .gif-carousel .carousel-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+  }
+
+  .gif-carousel .carousel-item.active {
+    opacity: 1;
+    z-index: 1;
+  }
 </style>
 
   {% block extra_head %}{% endblock %}
@@ -258,15 +282,38 @@
     <aside class="sidebar-right">
       {% block sidebar %}
         {% if user.is_authenticated %}
-          <h4>Активний зараз</h4>
-          <p>
-            Зараз тут тихо...<br />
-            Коли твій друг почне активну діяльність — наприклад, гра або голосовий чат — ми покажемо це тут!
-          </p>
+          <div class="gif-carousel">
+            <button id="prev-btn" aria-label="Назад">◀️</button>
+            <img src="{% static 'gifs/gif1.gif' %}" class="carousel-item active" alt="">
+            <img src="{% static 'gifs/gif2.gif' %}" class="carousel-item" alt="">
+            <img src="{% static 'gifs/gif3.gif' %}" class="carousel-item" alt="">
+            <button id="next-btn" aria-label="Вперед">▶️</button>
+          </div>
         {% endif %}
       {% endblock %}
     </aside>
   </div>
-  {% block extra_js %}{% endblock %}
+  {% block extra_js %}
+
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const items = document.querySelectorAll(".gif-carousel .carousel-item");
+  let current = 0;
+
+  function showSlide(index) {
+    items[current].classList.remove("active");
+    current = (index + items.length) % items.length;
+    items[current].classList.add("active");
+  }
+
+  // Переключение по клику на гифку
+  const carousel = document.querySelector(".gif-carousel");
+  carousel.addEventListener("click", () => {
+    showSlide(current + 1);
+  });
+});
+  </script>
+
+  {% endblock %}
 </body>
 </html>
