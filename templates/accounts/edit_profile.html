@@ -146,6 +146,22 @@
     padding: 10px 14px;
     margin-bottom: 20px;
   }
+
+  .avatar {
+    width: 192px;
+    height: 192px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00ccff;
+    background-color: #15304a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 22px;
+    color: #00ccff;
+    user-select: none;
+  }
 </style>
 
 <div class="edit-profile-container">
@@ -183,6 +199,9 @@
           <div class="input-group full-width">
             {{ form.avatar }}
             <label for="{{ form.avatar.id_for_label }}">Аватар</label>
+            <p><strong>Аватар:</strong><br>
+            <img class="avatar" src="{{ user.avatar.url }}" alt="Avatar">
+            </p>
           </div>
 
           <button type="submit">Зберегти зміни</button>
