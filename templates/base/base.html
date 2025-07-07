@@ -202,6 +202,100 @@
     opacity: 1;
     z-index: 1;
   }
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: #00ccff;
+  padding: 8px 16px;
+  border: 2px solid #00ccff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #00ccff88;
+  background: rgba(0, 204, 255, 0.1);
+  user-select: none;
+  max-width: 280px;
+}
+
+.audio-player #volume-slider {
+  flex-grow: 1;
+  width: auto;
+  min-width: 0;
+}
+
+#audio-player button {
+  background: #00ccff;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 1.6em;
+  cursor: pointer;
+  color: #121224;
+  box-shadow: 0 0 10px #00ccffbb;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+#audio-player button:hover {
+  background: #00e5ff;
+  transform: scale(1.1);
+  box-shadow: 0 0 18px #00e5ffcc;
+}
+
+#audio-player button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 6px #00ccffaa inset;
+}
+
+#volume-slider {
+  width: 120px;
+  accent-color: #00ccff;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+  #volume-slider:hover {
+    background: #0f2a55;
+  }
+
+  #volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00ccff;
+    box-shadow: 0 0 10px #00ccffaa;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    margin-top: -5px; /* сдвигает слайдер чтобы выровнять по центру */
+  }
+
+  #volume-slider::-webkit-slider-thumb:hover {
+    background: #00e5ff;
+    box-shadow: 0 0 14px #00e5ffcc;
+  }
+
+  /* Firefox */
+  #volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00ccff;
+    box-shadow: 0 0 10px #00ccffaa;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  #volume-slider::-moz-range-thumb:hover {
+    background: #00e5ff;
+    box-shadow: 0 0 14px #00e5ffcc;
+  }
 </style>
 
   {% block extra_head %}{% endblock %}
@@ -283,11 +377,25 @@
       {% block sidebar %}
         {% if user.is_authenticated %}
           <div class="gif-carousel">
-            <button id="prev-btn" aria-label="Назад">◀️</button>
             <img src="{% static 'gifs/gif1.gif' %}" class="carousel-item active" alt="">
             <img src="{% static 'gifs/gif2.gif' %}" class="carousel-item" alt="">
             <img src="{% static 'gifs/gif3.gif' %}" class="carousel-item" alt="">
-            <button id="next-btn" aria-label="Вперед">▶️</button>
+          </div>
+
+          <div class="audio-player">
+            <audio id="background-audio" src="{% static 'audio/background.mp3' %}" loop></audio>
+
+            <button id="play-pause-btn" aria-label="Включить/Пауза" style="background:none; border:none; padding:0; cursor:pointer; width:40px; height:40px;">
+              <!-- Play icon -->
+              <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00ccff" width="100%" height="100%">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <!-- Pause icon (скрыт по умолчанию) -->
+              <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00ccff" width="100%" height="100%" style="display:none;">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </button>
+            <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5" aria-label="Регулятор громкости">
           </div>
         {% endif %}
       {% endblock %}
@@ -312,6 +420,34 @@ document.addEventListener("DOMContentLoaded", function () {
     showSlide(current + 1);
   });
 });
+
+
+  // Аудиоплеер
+  const audio = document.getElementById('background-audio');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const iconPlay = document.getElementById('icon-play');
+  const iconPause = document.getElementById('icon-pause');
+  const volumeSlider = document.getElementById('volume-slider');
+
+  // Устанавливаем начальную громкость
+  audio.volume = volumeSlider.value;
+
+  playPauseBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'inline';
+    } else {
+      audio.pause();
+      iconPlay.style.display = 'inline';
+      iconPause.style.display = 'none';
+    }
+  });
+
+  volumeSlider.addEventListener('input', (e) => {
+    audio.volume = e.target.value;
+  });
+
   </script>
 
   {% endblock %}
