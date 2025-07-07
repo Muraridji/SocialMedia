@@ -49,36 +49,102 @@
     background-color: #00e5ff;
   }
 
-  ul.friends-list {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 0;
-    list-style: none;
-  }
-
-  ul.friends-list li {
+  .friend-card {
     background-color: #10172d;
     border-radius: 14px;
     padding: 16px 24px;
-    margin-bottom: 16px;
-    box-shadow: 0 0 8px #00ccff55;
+    margin: 0 auto 16px auto;
+    max-width: 700px;
+    box-shadow: 0 0 8px #00ccff55, 0 0 14px #00ccffaa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .friend-info {
     display: flex;
     align-items: center;
     gap: 14px;
   }
 
   .avatar {
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #00ccff;
+    background-color: #15304a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 22px;
+    color: #00ccff;
+    user-select: none;
   }
 
   .username {
     font-size: 1.1rem;
     font-weight: 600;
     color: #a0eaff;
+    text-decoration: none;
+  }
+
+  .username:hover {
+    text-decoration: underline;
+  }
+
+  .buttons-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+    color: #121224;
+    user-select: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-profile {
+    background-color: #00ccff;
+  }
+  .btn-profile:hover {
+    background-color: #00e5ff;
+  }
+
+  .btn-message {
+    background-color: #00aa66;
+    color: #fff;
+  }
+  .btn-message:hover {
+    background-color: #00cc88;
+  }
+
+  .btn-remove {
+    background-color: #ff5555;
+    color: #fff;
+  }
+  .btn-remove:hover {
+    background-color: #ff7777;
+  }
+
+  .status-text {
+    color: #a0eaff;
+    font-style: italic;
+    user-select: none;
+    font-size: 0.9rem;
   }
 
   .empty-message {
@@ -92,7 +158,7 @@
 <h1>Друзі</h1>
 
 <div style="text-align: center; margin-bottom: 30px;">
-  <a href="{% url 'accounts:user_list' %}" style="padding: 10px 20px; background-color: #00ccff; color: #121224; border-radius: 10px; font-weight: bold; text-decoration: none; box-shadow: 0 0 10px #00ccffaa;">👥 Знайти друзів</a>
+  <a href="{% url 'accounts:user_list' %}" class="btn btn-profile" style="color: #121224; text-decoration: none; box-shadow: 0 0 10px #00ccffaa;">👥 Знайти друзів</a>
 </div>
 
 <form method="get" class="search-form">
@@ -100,17 +166,26 @@
   <button type="submit">🔍 Пошук</button>
 </form>
 
-<ul class="friends-list">
-  {% for friend in friends %}
-    <li>
-      {% if friend.profile.avatar %}
-        <img src="{{ friend.profile.avatar.url }}" alt="Аватар {{ friend.username }}" class="avatar">
-      {% endif %}
-      <span class="username">{{ friend.username }}</span>
-      <a href="{% url 'chat:create_private_chat' user.id %}" class="chat" title="Написати повідомлення">💬</a>
-    </li>
-  {% empty %}
-    <li class="empty-message">Друзів не знайдено</li>
-  {% endfor %}
-</ul>
+{% for friend in friends %}
+  {% if not request.GET.search or request.GET.search|lower in friend.username|lower %}
+    <div class="friend-card">
+      <div class="friend-info">
+          {% if friend.avatar %}
+            <img src="{{ friend.avatar.url }}" alt="Аватар {{ friend.username }}" class="avatar">
+          {% else %}
+          <div class="avatar">
+            {{ friend.username|slice:":1"|upper }}
+          </div>
+        {% endif %}
+        <a href="{% url 'accounts:user-profile' friend.username %}" class="username">{{ friend.username }}</a>
+      </div>
+      <div class="buttons-group">
+        <a href="{% url 'chat:create_private_chat' friend.id %}" class="btn btn-message" title="Написати повідомлення">💬</a>
+        <a href="{% url 'accounts:remove_friend' friend.username %}" class="btn btn-remove" title="Видалити з друзів">✖</a>
+      </div>
+    </div>
+  {% endif %}
+{% empty %}
+  <p class="empty-message">Друзів не знайдено</p>
+{% endfor %}
 {% endblock %}

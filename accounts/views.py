@@ -124,7 +124,7 @@ class RemoveFriendView(LoginRequiredMixin, View):
         Friendship.objects.filter(user1=request.user, user2=friend).delete()
         Friendship.objects.filter(user1=friend, user2=request.user).delete()
         messages.success(request, f"{friend.username} видалено з друзів.")
-        return redirect('accounts:user-profile', username=username)
+        return redirect('accounts:friends_list', username=username)
 
 
 class FriendRequestsView(LoginRequiredMixin, ListView):

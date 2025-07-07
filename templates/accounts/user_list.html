@@ -14,73 +14,84 @@
     color: #00ccff;
     text-shadow: 0 0 8px #00e5ffbb;
   }
-  ul.user-list {
-    max-width: 700px;
+
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 900px;
     margin: 0 auto 60px auto;
-    padding: 0;
-    list-style: none;
+    padding: 0 10px;
   }
-  ul.user-list li {
+
+  .user-card {
     background-color: #10172d;
-    padding: 14px 24px;
+    padding: 14px 16px;
     border-radius: 14px;
     box-shadow: 0 0 8px #00ccff55, 0 0 20px #00ccffaa;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 16px;
+    text-align: center;
     transition: background-color 0.3s ease;
   }
-  ul.user-list li:hover {
+
+  .user-card:hover {
     background-color: #15304a;
   }
-  .user-avatar img {
+
+  .user-avatar img,
+  .user-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
-  }
-  .user-avatar {
-    width: 48px;
-    height: 48px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #00ccff;
+    margin-bottom: 10px;
+    background-color: #15304a;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #15304a;
-    border-radius: 50%;
+    color: #00ccff;
+    font-size: 28px;
+    font-weight: bold;
     user-select: none;
   }
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+
   .user-name {
     color: #a0eaff;
     text-decoration: none;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
+    margin-bottom: 10px;
   }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .actions a, .actions span.status-text {
-    margin-left: 12px;
-    font-size: 20px;
+    font-size: 18px;
     color: #00ccff;
     text-decoration: none;
   }
+
   .friend-remove {
     color: #ff5555;
     font-weight: bold;
   }
+
   .friend-add {
     color: #55ff55;
   }
+
   .pagination {
     text-align: center;
     margin-bottom: 40px;
   }
+
   .pagination a, .pagination span {
     display: inline-block;
     padding: 8px 12px;
@@ -90,23 +101,15 @@
     color: #00ccff;
     font-weight: 600;
   }
+
   .pagination span.current {
     background-color: #00ccff;
     color: #121224;
   }
+
   .pagination span {
     color: #555;
   }
-
- .avatar-small {
-  border-radius: 50%;
-  border: 2px solid #00ccff;
-  box-shadow: 0 0 10px #00ccff66;
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 10px;
-}
 </style>
 
 <h2>Користувачі</h2>
@@ -116,17 +119,17 @@
   <button type="submit" style="padding: 10px 18px; background-color: #00ccff; border: none; border-radius: 10px; color: #121224; font-weight: bold; margin-left: 10px;">🔍 Знайти</button>
 </form>
 
-<ul class="user-list">
+<div class="user-grid">
   {% for user in users %}
     {% if not request.GET.search or request.GET.search|lower in user.username|lower %}
-      <li>
+      <div class="user-card">
         {% include 'accounts/_user_list_item.html' %}
-      </li>
+      </div>
     {% endif %}
   {% empty %}
-    <li style="text-align: center; color: #555;">Користувачі не знайдені.</li>
+    <p style="text-align: center; color: #555;">Користувачі не знайдені.</p>
   {% endfor %}
-</ul>
+</div>
 
 {% if is_paginated %}
   <div class="pagination">
