@@ -8,126 +8,109 @@
   .groups-container {
     max-width: 900px;
     margin: 30px auto;
-    padding: 20px 25px;
-    background-color: #2f3136;
-    color: #dcddde;
+    padding: 20px 30px;
+    background-color: #121224;
+    color: #a0eaff;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    box-shadow:
+      0 0 10px #00ccff,
+      inset 0 0 8px #00ccff66;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 
-  .groups-container h2, .groups-container h3 {
-    color: #fff;
-    margin-bottom: 16px;
+  h2, h3 {
+    color: #00ccff;
+    text-shadow: 0 0 8px #00ccff88;
     font-weight: 700;
-  }
-
-  .group-card {
-    background-color: #36393f;
-    padding: 16px 20px;
-    border-radius: 10px;
-    margin-bottom: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
-    transition: background-color 0.2s ease;
-  }
-
-  .group-card:hover {
-    background-color: #40444b;
-  }
-
-  .group-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #b9bbbe;
-    text-decoration: none;
-  }
-
-  .group-title:hover {
-    color: #fff;
-    text-decoration: underline;
-  }
-
-  .group-desc {
-    font-size: 14px;
-    color: #999;
-  }
-
-  .group-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .group-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .group-rating {
-    font-weight: 700;
-    color: #ffcc00;
-    user-select: none;
-  }
-
-  .btn-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
   }
 
   .btn {
     border: none;
-    padding: 6px 14px;
-    border-radius: 6px;
+    padding: 8px 18px;
+    border-radius: 30px;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-
-  .btn-primary {
-    background-color: #5865f2;
-    color: #fff;
-  }
-
-  .btn-primary:hover {
-    background-color: #4752c4;
-  }
-
-  .btn-success {
-    background-color: #43b581;
-    color: #fff;
-  }
-
-  .btn-success:hover {
-    background-color: #3a9d74;
-  }
-
-  .btn-outline {
+    transition: background-color 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 8px #00ccff66;
     background-color: transparent;
-    border: 1.5px solid #43b581;
-    color: #43b581;
+    color: #a0eaff;
+    text-shadow: 0 0 6px #00ccffaa;
+    user-select: none;
   }
 
-  .btn-outline:hover {
-    background-color: #43b581;
+  .btn:hover {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 12px #00ccff;
+  }
+
+  /* --- Кнопка создания --- */
+  .btn-create {
+    padding: 12px 28px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: background 0.4s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    user-select: none;
+    background: linear-gradient(45deg, #7b3fbf, #4b1a8c);
+    color: #eefcff;
+    text-shadow: 0 0 4px #6f40b8;
+    box-shadow: 0 0 14px #7b3fbfcc;
+  }
+
+  .btn-create:hover {
+    background: linear-gradient(45deg, #9c55e0, #5e2ab3);
+    box-shadow: 0 0 28px #a57fff;
+    transform: translateY(-3px) scale(1.05);
     color: #fff;
   }
 
+  /* --- Кнопка удаления (красная с эффектом) --- */
   .btn-danger {
-    background-color: #ed4245;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: background 0.4s ease, box-shadow 0.3s ease, transform 0.2s ease;
     color: #fff;
+    background-color: #ed4245;
+    box-shadow: 0 0 14px #ed4245cc;
+    user-select: none;
   }
 
   .btn-danger:hover {
     background-color: #b93a3f;
+    box-shadow: 0 0 28px #b93a3fcc;
+    transform: translateY(-3px) scale(1.05);
+  }
+
+  /* --- Кнопка поиска --- */
+  .btn-search {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: 1.5px solid #00ccff;
+    background-color: transparent;
+    color: #00ccff;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: background 0.4s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 0 14px #00ccffcc;
+    user-select: none;
+  }
+
+  .btn-search:hover {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow: 0 0 28px #00ccffee;
+    transform: translateY(-3px) scale(1.05);
   }
 
   .search-form {
@@ -138,17 +121,80 @@
   }
 
   .search-form input {
-    background-color: #202225;
-    border: 1px solid #72767d;
-    color: #dcddde;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 15px;
     flex-grow: 1;
+    background-color: #0e152a;
+    border: 1.5px solid #00ccff;
+    color: #a0eaff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 15px;
+    text-shadow: 0 0 5px #00ccffaa;
   }
 
   .search-form input::placeholder {
-    color: #72767d;
+    color: #005577cc;
+  }
+
+  .group-card {
+    background-color: #10172d;
+    padding: 18px 24px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow:
+      0 0 12px #00ccff44,
+      inset 0 0 8px #00ccff22;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .group-card:hover {
+    background-color: #162044;
+    box-shadow:
+      0 0 16px #00ccff88,
+      inset 0 0 10px #00ccff44;
+  }
+
+  .group-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #a0eaff;
+    text-decoration: none;
+    text-shadow: 0 0 6px #00ccffaa;
+  }
+
+  .group-title:hover {
+    color: #00ccff;
+    text-decoration: underline;
+    text-shadow: 0 0 14px #00ccffcc;
+  }
+
+  .group-desc {
+    font-size: 14px;
+    color: #66bbffcc;
+    margin: 8px 0 12px 0;
+    line-height: 1.4;
+  }
+
+  .group-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .group-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #a0eaff;
+  }
+
+  .group-rating {
+    font-weight: 700;
+    color: #ffcc00;
+    user-select: none;
+    text-shadow: 0 0 10px #ffaa00;
   }
 
   @media (max-width: 600px) {
@@ -164,11 +210,11 @@
 <div class="groups-container">
   <h2>Групи</h2>
 
-  <a href="{% url 'groups:create_group' %}" class="btn btn-success">➕ Створити групу</a>
+  <a href="{% url 'groups:create_group' %}" class="btn-create">➕ Створити групу</a>
 
   <form method="get" action="{% url 'groups:group_list' %}" class="search-form">
     <input type="text" name="q" placeholder="Пошук груп..." value="{{ q }}" autocomplete="off" />
-    <button type="submit" class="btn btn-primary">🔍</button>
+    <button type="submit" class="btn">🔍</button>
     {% if q %}
       <a href="{% url 'groups:group_list' %}" class="btn btn-outline">Скинути</a>
     {% endif %}
@@ -183,13 +229,13 @@
       <div class="group-footer">
         <div class="group-meta">
           <span class="group-rating">{% star_rating group.avg_rating|default:0 %}</span>
-          <span style="color: #aaa;">(ви учасник)</span>
+          <span style="color: #00ccffaa;">(ви учасник)</span>
         </div>
         <div class="btn-group">
           {% if request.user == group.owner %}
             <form method="post" action="{% url 'groups:group_delete' group.id %}" onsubmit="return confirm('Видалити групу?');">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Видалити</button>
+              <button type="submit" class="btn-danger">Видалити</button>
             </form>
           {% endif %}
         </div>

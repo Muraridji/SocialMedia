@@ -1,14 +1,115 @@
 {% extends 'base/base.html' %}
 
+{% block extra_head %}
+<style>
+  /* Основной контейнер с неоновым свечением */
+  .delete-wrapper {
+    max-width: 480px;
+    margin: 60px auto;
+    padding: 36px 32px;
+    background: #121224;
+    border-radius: 16px;
+    box-shadow:
+      0 0 24px #ed4245cc,
+      inset 0 0 18px #ed424544;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #a0eaff;
+    text-align: center;
+    user-select: none;
+  }
+
+  .delete-wrapper h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ff4555;
+    text-shadow: 0 0 12px #ff455588, 0 0 24px #ed4245cc;
+    margin-bottom: 14px;
+  }
+
+  .delete-wrapper p {
+    font-size: 1.15rem;
+    margin-bottom: 36px;
+    color: #ff6f6fcc;
+    text-shadow: 0 0 8px #ff4d55cc;
+  }
+
+  /* Кнопки в стиле неон */
+  .btn-neon {
+    cursor: pointer;
+    border: none;
+    border-radius: 28px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 14px 36px;
+    user-select: none;
+    transition:
+      box-shadow 0.3s ease,
+      background-color 0.3s ease,
+      transform 0.2s ease,
+      color 0.3s ease;
+    text-shadow: 0 0 6px currentColor;
+    box-shadow: 0 0 16px currentColor;
+  }
+
+  .btn-danger-neon {
+    background-color: #ed4245;
+    color: #fff;
+    box-shadow:
+      0 0 20px #ed4245cc,
+      0 0 30px #ed4245aa;
+  }
+  .btn-danger-neon:hover,
+  .btn-danger-neon:focus {
+    background-color: #b93a3f;
+    box-shadow:
+      0 0 40px #b93a3fcc,
+      0 0 50px #b93a3fff;
+    transform: translateY(-3px) scale(1.07);
+    outline: none;
+  }
+
+  .btn-cancel-neon {
+    background-color: transparent;
+    color: #00ccff;
+    border: 2px solid #00ccff;
+    box-shadow:
+      0 0 14px #00ccffcc;
+  }
+  .btn-cancel-neon:hover,
+  .btn-cancel-neon:focus {
+    background-color: #00ccff;
+    color: #121224;
+    box-shadow:
+      0 0 28px #00ccffee,
+      inset 0 0 8px #00ccffee;
+    transform: translateY(-3px) scale(1.07);
+    outline: none;
+  }
+
+  /* Форма — вертикальная и централизованная */
+  form.delete-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="delete-wrapper">
+  <h2>Ви впевнені, що хочете видалити групу<br>«{{ group.name }}»?</h2>
+  <p>Ця дія є необоротною і видалить усі дані групи.</p>
 
-  <h2>Видалити групу "{{ group.name }}"?</h2>
-  <p>Ця дія необоротна. Ви впевнені?</p>
-
-  <form method="post">
+  <form method="post" class="delete-form" novalidate>
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Видалити</button>
-    <a href="{% url 'groups:group_detail' group.id %}" class="btn btn-secondary">Відмінити</a>
+    <button type="submit" class="btn-neon btn-danger-neon" aria-label="Підтвердити видалення групи">
+      Видалити
+    </button>
+    <a href="{% url 'groups:group_detail' group.id %}" class="btn-neon btn-cancel-neon" aria-label="Скасувати видалення групи">
+      Скасувати
+    </a>
   </form>
-
+</div>
 {% endblock %}
