@@ -211,12 +211,20 @@
       <div class="chat-list">
         {% if user.is_authenticated %}
           {% for chat in user.chats.all %}
-            <a href="{% url 'chat:chat_detail' chat.id %}" class="chat-item">
+            <a href="{% url 'chat:chat_detail' chat.id %}" class="chat-item" style="display: flex; align-items: center; gap: 10px;">
               {% if chat.is_group %}
-                {{ chat.name }}
+                <img src="{% static 'default_group.png' %}" alt="Аватар групи" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background-color: #22334d; box-shadow: 0 0 6px #00ccff44;">
+                <span>{{ chat.name }}</span>
               {% else %}
                 {% for participant in chat.participants.all %}
-                  {% if participant != user %}{{ participant.username }}{% endif %}
+                  {% if participant != user %}
+                    {% if participant.avatar %}
+                      <img src="{{ participant.avatar.url }}" alt="{{ participant.username }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background-color: #22334d; box-shadow: 0 0 6px #00ccff44;">
+                    {% else %}
+                      <img src="{% static 'default_avatar.png' %}" alt="Аватар" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background-color: #22334d; box-shadow: 0 0 6px #00ccff44;">
+                    {% endif %}
+                    <span>{{ participant.username }}</span>
+                  {% endif %}
                 {% endfor %}
               {% endif %}
             </a>
@@ -225,6 +233,7 @@
           {% endfor %}
         {% endif %}
       </div>
+
 
       {% if user.is_authenticated %}
         <div class="profile-summary">
