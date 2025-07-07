@@ -184,9 +184,64 @@
     color: #66f0ff;
     text-shadow: 0 0 12px #66f0ff;
   }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    background-color: #1a1f40;
+    margin: 5% auto;
+    padding: 20px;
+    border: 2px solid #00ccff;
+    border-radius: 12px;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 0 20px #00ccff;
+    color: #a0eaff;
+    position: relative;
+  }
+
+  .close {
+    color: #00ccff;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .close:hover {
+    color: #66f0ff;
+    text-shadow: 0 0 10px #66f0ff;
+  }
+
+  .go-back-btn {
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    background-color: #004466;
+    color: #00ccff;
+    padding: 12px 28px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    box-shadow: 0 0 14px #00ccffaa;
+    width: fit-content;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  }
 </style>
 
-<a href="{% url 'posts:post_list' %}" class="back-link">← Назад</a>
+<a href="{% url 'posts:post_list' %}" class="go-back-btn">← Назад</a>
 
 <div class="container">
 
@@ -211,41 +266,74 @@
     <button type="submit" class="likes-button">👍 {{ post.likes.count }}</button>
   </form>
 
-  <hr>
-
-  <h2>Коментарі</h2>
-
-  <div class="comments-container">
-    {% for comment in post.comments.all %}
-      <div class="comment">
-        <strong>{{ comment.author }}:</strong> {{ comment.content }}
-        {% if comment.media %}
-          <br><img src="{{ comment.media.url }}" alt="медіа коментаря">
-        {% endif %}
-        <div class="comment-actions">
-          <form action="{% url 'posts:comment_like' comment.pk %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">❤️ {{ comment.likes.count }}</button>
-          </form>
-          {% if comment.author == request.user %}
-            <a href="{% url 'posts:comment_delete' comment.pk %}">🗑️</a>
-          {% endif %}
-        </div>
-      </div>
-    {% empty %}
-      <p>Поки що коментарів немає.</p>
-    {% endfor %}
-  </div>
-
-  {% if user.is_authenticated %}
-  <div class="comment-form-container">
-    <form method="post" enctype="multipart/form-data" class="comment-form">
-      {% csrf_token %}
-      {{ comment_form.as_p }}
-      <button type="submit">Надіслати</button>
-    </form>
-  </div>
+  {% if request.user == post.creator %}
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <a href="{% url 'posts:post_update' post.pk %}" class="likes-button" style="background-color: #00ccff;">✏️ Редагувати</a>
+      <a href="{% url 'posts:post_delete' post.pk %}" class="likes-button" style="background-color: #ff4d4d;">🗑️ Видалити</a>
+    </div>
   {% endif %}
 
+  <hr>
+
+<!-- Кнопка открытия модального окна -->
+<button onclick="openModal()" class="likes-button" style="align-self: flex-start;">💬 Коментарі ({{ post.comments.count }})</button>
+
+<!-- Модальное окно -->
+<div id="commentsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Коментарі</h2>
+    <div class="comments-container">
+      {% for comment in post.comments.all %}
+        <div class="comment">
+          <strong>{{ comment.author }}:</strong> {{ comment.content }}
+          {% if comment.media %}
+            <br><img src="{{ comment.media.url }}" alt="медіа коментаря">
+          {% endif %}
+          <div class="comment-actions">
+            <form action="{% url 'posts:comment_like' comment.pk %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">👍 {{ comment.likes.count }}</button>
+            </form>
+            {% if comment.author == request.user %}
+              <a href="{% url 'posts:comment_delete' comment.pk %}">🗑️</a>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <p>Поки що коментарів немає.</p>
+      {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+      <div class="comment-form-container">
+        <form method="post" enctype="multipart/form-data" class="comment-form">
+          {% csrf_token %}
+          {{ comment_form.as_p }}
+          <button type="submit">Надіслати</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
 </div>
+</div>
+
+
+<script>
+  function openModal() {
+    document.getElementById('commentsModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('commentsModal').style.display = 'none';
+  }
+
+  window.onclick = function(event) {
+    const modal = document.getElementById('commentsModal');
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+
 {% endblock %}

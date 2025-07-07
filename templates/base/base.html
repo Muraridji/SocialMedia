@@ -6,146 +6,180 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}LynkR{% endblock %}</title>
-  <style>
-    body, html {
-      margin: 0;
-      height: 100%;
-      background-color: #313338;
-      font-family: "Segoe UI", sans-serif;
-      color: #dcddde;
-      overflow: hidden; /* Вимикаємо прокрутку сторінки */
-    }
+<style>
+  body, html {
+    margin: 0;
+    height: 100%;
+    background-color: #121224;
+    font-family: "Segoe UI", sans-serif;
+    color: #a0eaff;
+    overflow: hidden;
+  }
 
-    .layout-container {
-      display: flex;
-      height: 100vh;
-    }
+  .layout-container {
+    display: flex;
+    height: 100vh;
+  }
 
-    .sidebar-left {
-      width: 72px;
-      background-color: #1e1f22;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 0;
-      gap: 20px;
-    }
+  .sidebar-left {
+    width: 72px;
+    background-color: #0d1424;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    gap: 20px;
+    box-shadow: 0 0 10px #00ccff33;
+  }
 
-    .sidebar-left a {
-      text-decoration: none;
-      color: #b9bbbe;
-      font-size: 24px;
-    }
+  .sidebar-left a {
+    text-decoration: none;
+    color: #77aacc;
+    font-size: 24px;
+    position: relative;
+    transition: color 0.3s ease;
+  }
 
-    .sidebar-left a:hover {
-      color: #fff;
-    }
+  .sidebar-left a:hover {
+    color: #00ccff;
+    text-shadow: 0 0 6px #00ccff;
+  }
 
-    .chat-sidebar {
-      width: 260px;
-      background-color: #2b2d31;
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      height: 100vh;
-      box-sizing: border-box;
-    }
+  .chat-sidebar {
+    width: 260px;
+    background-color: #10172d;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    height: 100vh;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px #00ccff22 inset;
+  }
 
-    .chat-sidebar h3 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: #fff;
-      flex-shrink: 0;
-    }
+  .chat-sidebar h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #00ccff;
+    text-shadow: 0 0 5px #00e5ffbb;
+    flex-shrink: 0;
+  }
 
-    .chat-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-grow: 1;
-      overflow-y: auto;
-      margin-bottom: 14px;
-    }
+  .chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 14px;
+  }
 
-    .chat-item {
-      background-color: #383a40;
-      padding: 8px 12px;
-      border-radius: 5px;
-      color: #dcddde;
-      text-decoration: none;
-    }
+  .chat-item {
+    background-color: #1b2439;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: #a0eaff;
+    text-decoration: none;
+    box-shadow: 0 0 6px #00ccff33;
+    transition: background-color 0.2s ease;
+  }
 
-    .chat-item:hover {
-      background-color: #4e5058;
-    }
+  .chat-item:hover {
+    background-color: #22334d;
+  }
 
-    .profile-summary {
-      border-top: 1px solid #444;
-      padding-top: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
+  .profile-summary {
+    border-top: 1px solid #223344;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
 
-    .profile-summary img {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      background-color: #555;
-      flex-shrink: 0;
-    }
+  .profile-summary img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #22334d;
+    box-shadow: 0 0 6px #00ccff77;
+    flex-shrink: 0;
+  }
 
-    .profile-summary .info {
-      flex-grow: 1;
-      overflow: hidden;
-    }
+  .profile-summary .info .username {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #00ccff;
+    text-shadow: 0 0 4px #00e5ff88;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    .profile-summary .info .username {
-      font-weight: 700;
-      font-size: 1.1em;
-      color: #faa61a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .profile-summary .info .role {
+    font-size: 0.9em;
+    color: #77aacc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    .profile-summary .info .role {
-      font-size: 0.9em;
-      color: #999;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .profile-summary a.edit-link {
+    color: #00ccff;
+    font-size: 0.9em;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 
-    .profile-summary a.edit-link {
-      color: #7289da;
-      font-size: 0.9em;
-      text-decoration: none;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+  .profile-summary a.edit-link:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 4px #00e5ff88;
+  }
 
-    .profile-summary a.edit-link:hover {
-      text-decoration: underline;
-    }
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #121224;
+    box-shadow: inset 0 0 20px #00ccff11;
+  }
 
-    .main-content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background-color: #313338;
-    }
+  .sidebar-right {
+    width: 300px;
+    background-color: #10172d;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 0 15px #00ccff22 inset;
+  }
 
-    .sidebar-right {
-      width: 300px;
-      background-color: #2b2d31;
-      padding: 20px;
-      overflow-y: auto;
-    }
-  </style>
+  .sidebar-right h4 {
+    color: #00ccff;
+    text-shadow: 0 0 4px #00e5ff99;
+  }
+
+  .sidebar-right p {
+    color: #77aacc;
+    font-size: 14px;
+  }
+
+  /* Уведомление (🔔) */
+  .sidebar-left span {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background-color: #f04747;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 12px;
+    line-height: 1;
+    box-shadow: 0 0 5px #f04747aa;
+  }
+</style>
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -154,28 +188,16 @@
       {% if user.is_authenticated %}
         <a href="{% url 'home' %}" title="Головна">🏠</a>
         <a href="{% url 'posts:post_list' %}" title="Пости">📄</a>
-        <a href="{% url 'chat:chat_list' %}" title="Чати">💬</a>
         <a href="{% url 'groups:group_list' %}" title="Групи">👥</a>
         <a href="{% url 'accounts:friends_list' user.username %}" title="Друзі">👤</a>
+        <a href="#" title="Сповіщення">
           🔔
           {% if unread_notifications_count > 0 %}
-            <span style="
-              position: absolute;
-              top: -6px;
-              right: -10px;
-              background-color: #f04747;
-              color: white;
-              font-size: 11px;
-              font-weight: bold;
-              padding: 2px 6px;
-              border-radius: 12px;
-              line-height: 1;
-            ">
+            <span class="notification-badge">
               {{ unread_notifications_count }}
             </span>
           {% endif %}
         </a>
-
         <a href="{% url 'accounts:user-profile' request.user.username %}" title="Профіль">⚙️</a>
         <a href="{% url 'accounts:logout' %}" title="Вихід" style="color: #f04747;">🚪</a>
       {% else %}
@@ -199,7 +221,7 @@
               {% endif %}
             </a>
           {% empty %}
-            <span style="color: #888">Немає чатів</span>
+            <span style="color: #777">Немає чатів</span>
           {% endfor %}
         {% endif %}
       </div>
@@ -228,7 +250,7 @@
       {% block sidebar %}
         {% if user.is_authenticated %}
           <h4>Активний зараз</h4>
-          <p style="color: #999; font-size: 14px;">
+          <p>
             Зараз тут тихо...<br />
             Коли твій друг почне активну діяльність — наприклад, гра або голосовий чат — ми покажемо це тут!
           </p>
