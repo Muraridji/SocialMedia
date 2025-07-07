@@ -2,40 +2,65 @@
 
 {% block content %}
 <style>
-  body {
-    background-color: #121224;
-    color: #a0eaff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  .welcome-container {
+    max-width: 600px;
+    margin: 60px auto; /* центрируем блок по горизонтали с отступом сверху */
+    background: rgba(0, 204, 255, 0.1);
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow:
+      0 0 10px #00ccff,
+      0 0 40px #00ccff44;
+    text-align: center;
   }
 
   h1 {
     color: #00ccff;
-    text-shadow: 0 0 8px #00ccff;
-    margin-bottom: 20px;
+    text-shadow: 0 0 12px #00ccff;
+    font-size: 3rem;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+  }
+
+  h2 {
+    color: #66f0ff;
+    font-weight: 400;
+    margin-bottom: 25px;
+    font-style: italic;
+    text-shadow: 0 0 10px #66f0ff88;
   }
 
   p {
-    font-size: 1.1em;
-    margin-bottom: 15px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #a0eaff;
   }
 
-  a {
-    color: #00ccff;
-    text-decoration: none;
-    font-weight: 600;
-    text-shadow: 0 0 6px #00ccff;
-    transition: color 0.3s ease;
+  .highlight {
+    color: #00ffff;
+    font-weight: 700;
+    text-shadow: 0 0 8px #00ffffaa;
   }
 
-  a:hover {
-    color: #66f0ff;
-    text-shadow: 0 0 20px #66f0ff;
+  .quote {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-top: 30px;
+    color: #88eaff;
+    text-shadow: 0 0 6px #88eaff55;
   }
 </style>
 
-<h1>Головна сторінка</h1>
-<p>Вітаємо, {{ request.user.username }}!</p>
-<p><a href="{% url 'accounts:user_list' %}">🔎 Знайти нових друзів</a></p>
-<p><a href="{% url 'chat:chat_list' %}">💬 Перейти до чатів</a></p>
-<p><a href="{% url 'accounts:friend_request' %}">📨 Перевірити запити в друзі</a></p>
+<div class="welcome-container">
+  <h1>SoulLink</h1>
+  <h1>Ласкаво просимо, <span class="highlight">{{ request.user.username }}</span>!</h1>
+  <h2>Занурся у світ нових знайомств і цікавих розмов</h2>
+  <p>Тут, серед неонових світел, кожен може знайти друзів, з ким поділитися думками і мріями.</p>
+  <p>Нехай цей простір стане твоїм безпечним куточком для теплих розмов і яскравих ідей.</p>
+  <p>Ти — частина спільноти, де кожен голос важливий, а кожна історія — унікальна.</p>
+
+  <p class="quote">«Спілкування — це світло, що розсіює темряву самотності.»</p>
+</div>
 {% endblock %}

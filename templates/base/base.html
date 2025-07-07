@@ -308,14 +308,6 @@
         <a href="{% url 'posts:post_list' %}" title="Пости">📄</a>
         <a href="{% url 'groups:group_list' %}" title="Групи">👥</a>
         <a href="{% url 'accounts:friends_list' user.username %}" title="Друзі">👤</a>
-        <a href="#" title="Сповіщення">
-          🔔
-          {% if unread_notifications_count > 0 %}
-            <span class="notification-badge">
-              {{ unread_notifications_count }}
-            </span>
-          {% endif %}
-        </a>
         <a href="{% url 'accounts:user-profile' request.user.username %}" title="Профіль">⚙️</a>
         <a href="{% url 'accounts:logout' %}" title="Вихід" style="color: #f04747;">🚪</a>
       {% else %}
